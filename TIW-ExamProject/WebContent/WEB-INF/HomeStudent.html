@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="ISO-8859-1">
+<title>Student's home</title>
+<link rel="stylesheet" type="text/css" media="all" href="../CSS/mystyle.css" th:href="@{/css/mystyle.css}" />
+</head>
+<body>
+	<div align="right">
+		<a th:href="@{/Logout}">Logout</a>
+	</div>
+	<h1>Welcome to the Student Home page</h1>
+	Nice to see you again
+	<span th:text="${student.name}"></span>
+	<span th:text="${student.surname}"></span>
+	<span th:text="${student.email}"></span>
+	
+</body>
+</html>
