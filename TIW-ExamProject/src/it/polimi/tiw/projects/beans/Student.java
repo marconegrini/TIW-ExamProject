@@ -29,7 +29,7 @@ public class Student {
 		return corsoDiLaurea;
 	}
 	
-	public void setId(int i) {
+	public void setId(Integer i) {
 		studentId = i;
 	}
 

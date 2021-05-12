@@ -2,10 +2,14 @@ package it.polimi.tiw.projects.beans;
 
 public class User {
 	
+	private int userId;
 	private String username;
 	private String password;
 	private Role role;
 
+	public Integer getUserId() {
+		return userId;
+	}
 
 	public String getUsername() {
 		return username;
@@ -17,6 +21,10 @@ public class User {
 	
 	public String getPassword() {
 		return password;
+	}
+	
+	public void setUserId(Integer id) {
+		userId = id;
 	}
 
 	public void setUsername(String u) {

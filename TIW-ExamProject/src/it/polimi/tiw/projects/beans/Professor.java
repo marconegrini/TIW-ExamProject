@@ -6,7 +6,7 @@ public class Professor {
 	private String name;
 	private String surname;
 
-	public int getId() {
+	public Integer getId() {
 		return professorId;
 	}
 
@@ -18,7 +18,7 @@ public class Professor {
 		return surname;
 	}
 	
-	public void setId(int i) {
+	public void setId(Integer i) {
 		professorId = i;
 	}
 

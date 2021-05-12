@@ -14,11 +14,12 @@ public class StudentDAO {
 		this.con = connection;
 	}
 
-	public Student checkStudent(String usrn, String pwd) throws SQLException {
-		String query =	"SELECT  studentId, name, surname, email, corsoDiLaurea FROM students WHERE studUser = ? AND studPass = ?";
+	public Student checkStudent(String id, String usrn, String pwd) throws SQLException {
+		String query =	"SELECT  studentId, name, surname, email, corsoDiLaurea FROM students WHERE studentId = ? AND studUser = ? AND studPass = ?";
 		try (PreparedStatement pstatement = con.prepareStatement(query);) {
-			pstatement.setString(1, usrn);
-			pstatement.setString(2, pwd);
+			pstatement.setString(1, id);
+			pstatement.setString(2, usrn);
+			pstatement.setString(3, pwd);
 			try (ResultSet result = pstatement.executeQuery();) {
 				if (!result.isBeforeFirst()) // no results, credential check failed
 					return null;
