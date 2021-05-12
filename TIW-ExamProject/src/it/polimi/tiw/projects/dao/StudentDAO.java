@@ -14,12 +14,11 @@ public class StudentDAO {
 		this.con = connection;
 	}
 
-	public Student checkStudent(Integer studentId, String usrn, String pwd) throws SQLException {
-		String query =	"SELECT  studentId, name, surname, email, username FROM students WHERE studentId = ? AND username = ? AND password = ?";
+	public Student checkStudent(String usrn, String pwd) throws SQLException {
+		String query =	"SELECT  studentId, name, surname, email, corsoDiLaurea FROM students WHERE studUser = ? AND studPass = ?";
 		try (PreparedStatement pstatement = con.prepareStatement(query);) {
-			pstatement.setInt(1, studentId);
-			pstatement.setString(2, usrn);
-			pstatement.setString(3, pwd);
+			pstatement.setString(1, usrn);
+			pstatement.setString(2, pwd);
 			try (ResultSet result = pstatement.executeQuery();) {
 				if (!result.isBeforeFirst()) // no results, credential check failed
 					return null;
@@ -30,7 +29,7 @@ public class StudentDAO {
 					student.setName(result.getString("name"));
 					student.setSurname(result.getString("surname"));
 					student.setEmail(result.getString("email"));
-					student.setUsername(result.getString("username"));
+					student.setCorsoDiLaurea(result.getString("corsoDiLaurea"));
 					return student;
 				}
 			}

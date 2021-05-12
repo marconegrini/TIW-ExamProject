@@ -15,12 +15,11 @@ public class ProfessorDAO {
 		this.con = connection;
 	}
 
-	public Professor checkProfessor(Integer professorId, String usrn, String pwd) throws SQLException {
-		String query =	"SELECT  professorId, name, surname, username FROM professors WHERE professorId = ? AND username = ? AND password = ?";
+	public Professor checkProfessor(String usrn, String pwd) throws SQLException {
+		String query =	"SELECT  professorId, name, surname FROM professors WHERE profUser = ? AND profPass = ?";
 		try (PreparedStatement pstatement = con.prepareStatement(query);) {
-			pstatement.setInt(1, professorId);
-			pstatement.setString(2, usrn);
-			pstatement.setString(3, pwd);
+			pstatement.setString(1, usrn);
+			pstatement.setString(2, pwd);
 			try (ResultSet result = pstatement.executeQuery();) {
 				if (!result.isBeforeFirst()) // no results, credential check failed
 					return null;
@@ -30,7 +29,6 @@ public class ProfessorDAO {
 					professor.setId(result.getInt("professorId"));
 					professor.setName(result.getString("name"));
 					professor.setSurname(result.getString("surname"));
-					professor.setUsername(result.getString("username"));
 					return professor;
 				}
 			}

@@ -5,7 +5,6 @@ public class Professor {
 	private int professorId;
 	private String name;
 	private String surname;
-	private String username;
 
 	public int getId() {
 		return professorId;
@@ -17,10 +16,6 @@ public class Professor {
 
 	public String getSurname() {
 		return surname;
-	}
-	
-	public String getUsername() {
-		return username;
 	}
 	
 	public void setId(int i) {
@@ -35,8 +30,4 @@ public class Professor {
 		surname = s;
 	}
 	
-	public void setUsername(String u) {
-		username = u;
-	}
-
 }

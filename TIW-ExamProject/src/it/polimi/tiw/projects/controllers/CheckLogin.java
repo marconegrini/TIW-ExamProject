@@ -83,7 +83,7 @@ public class CheckLogin extends HttpServlet {
 				StudentDAO student = new StudentDAO(connection);
 				Student stud = null;
 				try {
-					stud = student.checkStudent(u.getId(), u.getUsername(), u.getPassword());
+					stud = student.checkStudent(u.getUsername(), u.getPassword());
 				} catch (SQLException e) {
 					response.sendError(HttpServletResponse.SC_BAD_GATEWAY, "Failure in database credential checking");
 					throw new ServletException(e); 
@@ -102,7 +102,7 @@ public class CheckLogin extends HttpServlet {
 				ProfessorDAO professor = new ProfessorDAO(connection);
 				Professor prof = null;
 				try {
-					prof = professor.checkProfessor(u.getId(), u.getUsername(), u.getPassword());
+					prof = professor.checkProfessor(u.getUsername(), u.getPassword());
 				} catch (SQLException e) {
 					response.sendError(HttpServletResponse.SC_BAD_GATEWAY, "Failure in database credential checking");
 					throw new ServletException(e); 

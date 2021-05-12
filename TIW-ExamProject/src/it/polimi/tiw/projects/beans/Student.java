@@ -6,7 +6,7 @@ public class Student {
 	private String name;
 	private String surname;
 	private String email;
-	private String username;
+	private String corsoDiLaurea;
 	
 
 	public int getId() {
@@ -21,12 +21,12 @@ public class Student {
 		return surname;
 	}
 	
-	public String getUsername() {
-		return username;
-	}
-	
 	public String getEmail() {
 		return email;
+	}
+	
+	public String getCorsoDiLaurea() {
+		return corsoDiLaurea;
 	}
 	
 	public void setId(int i) {
@@ -44,9 +44,9 @@ public class Student {
 	public void setEmail(String e) {
 		email = e;
 	}
-	
-	public void setUsername(String u) {
-		username = u;
+		
+	public void setCorsoDiLaurea(String cdl) {
+		corsoDiLaurea = cdl;
 	}
 
 }
