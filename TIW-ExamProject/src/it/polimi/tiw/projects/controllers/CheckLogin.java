@@ -17,7 +17,12 @@ import org.thymeleaf.context.WebContext;
 import org.thymeleaf.templatemode.TemplateMode;
 import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
 
+import it.polimi.tiw.projects.beans.Professor;
+import it.polimi.tiw.projects.beans.Role;
+import it.polimi.tiw.projects.beans.Student;
 import it.polimi.tiw.projects.beans.User;
+import it.polimi.tiw.projects.dao.ProfessorDAO;
+import it.polimi.tiw.projects.dao.StudentDAO;
 import it.polimi.tiw.projects.dao.UserDAO;
 import it.polimi.tiw.projects.utils.ConnectionHandler;
 
@@ -62,11 +67,9 @@ public class CheckLogin extends HttpServlet {
 		} catch (SQLException e) {
 			response.sendError(HttpServletResponse.SC_BAD_GATEWAY, "Failure in database credential checking");
 			throw new ServletException(e); 
-
  		}
 		
-		
-		String path;
+		String path;	
 		
 		if (u == null) {
 			ServletContext servletContext = getServletContext();
@@ -74,13 +77,53 @@ public class CheckLogin extends HttpServlet {
 			//setting the error message variable if user doesn't exists
 			ctx.setVariable("errorMsg", "Incorrect username or password");
 			path = "/index.html";
-			templateEngine.process(path, ctx, response.getWriter());
+			templateEngine.process(path, ctx, response.getWriter());	
 		} else {
-			request.getSession().setAttribute("user", u);
+			if(u.getRole().equals("STUDENT")) {
+				StudentDAO student = new StudentDAO(connection);
+				Student stud = null;
+				try {
+					stud = student.checkStudent(u.getId(), u.getUsername(), u.getPassword());
+				} catch (SQLException e) {
+					response.sendError(HttpServletResponse.SC_BAD_GATEWAY, "Failure in database credential checking");
+					throw new ServletException(e); 
+		 		}
+				if (stud == null) {
+					ServletContext servletContext = getServletContext();
+					final WebContext ctx = new WebContext(request, response, servletContext, request.getLocale());
+					//setting the error message variable if user doesn't exists
+					ctx.setVariable("errorMsg", "Incorrect username or password");
+					path = "/index.html";
+					templateEngine.process(path, ctx, response.getWriter());
+				} else {
+					request.getSession().setAttribute("student", stud);
+				}
+			} else {
+				ProfessorDAO professor = new ProfessorDAO(connection);
+				Professor prof = null;
+				try {
+					prof = professor.checkProfessor(u.getId(), u.getUsername(), u.getPassword());
+				} catch (SQLException e) {
+					response.sendError(HttpServletResponse.SC_BAD_GATEWAY, "Failure in database credential checking");
+					throw new ServletException(e); 
+		 		}
+				if (prof == null) {
+					ServletContext servletContext = getServletContext();
+					final WebContext ctx = new WebContext(request, response, servletContext, request.getLocale());
+					//setting the error message variable if user doesn't exists
+					ctx.setVariable("errorMsg", "Incorrect username or password");
+					path = "/index.html";
+					templateEngine.process(path, ctx, response.getWriter());
+				} else {
+					request.getSession().setAttribute("professor", prof);
+				}
+			}
+			
 			String target = (u.getRole().equals("STUDENT")) ? "/GoToHomeStudent" : "/GoToHomeProfessor";
 			path = getServletContext().getContextPath() + target;
 			response.sendRedirect(path);
 		}
+		
 	}
 
 	public void destroy() {

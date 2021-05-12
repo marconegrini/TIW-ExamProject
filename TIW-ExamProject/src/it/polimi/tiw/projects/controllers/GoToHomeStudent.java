@@ -50,36 +50,21 @@ public class GoToHomeStudent extends HttpServlet {
 			throws ServletException, IOException {
 		
 		String loginpath = getServletContext().getContextPath() + "/index.html";
-		User u = null;
+		Student student = null;
 		HttpSession s = request.getSession();
-		if (s.isNew() || s.getAttribute("user") == null) {
+		if (s.isNew() || s.getAttribute("student") == null) {
 			response.sendRedirect(loginpath);
 			return;
 		} else {
-			u = (User) s.getAttribute("user");
-			if (!u.getRole().equals("STUDENT")) {
-				response.sendRedirect(loginpath);
-				return;
-			}
+			student = (Student) s.getAttribute("student");
 		}
 		
-		StudentDAO student = new StudentDAO(connection);
-		Student stud = null;
-		
-		try {
-			stud = student.checkStudent(u.getId(), u.getUsername(), u.getPassword());
-		} catch (SQLException e) {
-			// throw new ServletException(e); for debugging
-			response.sendError(HttpServletResponse.SC_BAD_GATEWAY, "Failure in database credential checking");
-			throw new ServletException(e); 
-
- 		}
-		
 		String path = "/WEB-INF/HomeStudent.html";
+		request.getSession().setAttribute("student", student);
 		ServletContext servletContext = getServletContext();
 		final WebContext ctx = new WebContext(request, response, servletContext, request.getLocale());
 		ctx.clearVariables();
-		ctx.setVariable("student", stud);
+		ctx.setVariable("student", student);
 		templateEngine.process(path, ctx, response.getWriter());
 	}
 
