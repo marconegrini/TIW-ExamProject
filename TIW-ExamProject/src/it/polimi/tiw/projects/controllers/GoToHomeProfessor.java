@@ -16,8 +16,12 @@ import org.thymeleaf.context.WebContext;
 import org.thymeleaf.templatemode.TemplateMode;
 import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
 
+import java.util.List;
 import it.polimi.tiw.projects.beans.Professor;
 import it.polimi.tiw.projects.beans.User;
+import it.polimi.tiw.projects.beans.Appello;
+import it.polimi.tiw.projects.beans.Course;
+import it.polimi.tiw.projects.dao.CourseDAO;
 import it.polimi.tiw.projects.dao.ProfessorDAO;
 import it.polimi.tiw.projects.utils.ConnectionHandler;
 
@@ -56,12 +60,32 @@ public class GoToHomeProfessor extends HttpServlet {
 			professor = (Professor) s.getAttribute("professor");
 		}
 		
+		String chosenCourse = request.getParameter("courseId");
+		ProfessorDAO prof = new ProfessorDAO(connection);
+		List<Course> courses = null;
+		List<Appello> appelli = null;
+		Integer chosenCourseId = 0;
+		try {
+			courses = prof.findCourses(professor.getId().toString());
+			if (chosenCourse == null) {
+				chosenCourseId = prof.findDefaultCourse(professor.getId().toString());
+			} else {
+				chosenCourseId = Integer.parseInt(chosenCourse);
+			}
+			CourseDAO cDao = new CourseDAO(connection);
+			appelli = cDao.findAppelli(chosenCourseId.toString());
+		} catch (SQLException e) {
+			// throw new ServletException(e);
+			response.sendError(HttpServletResponse.SC_BAD_GATEWAY, "Failure in professor's courses database extraction");
+		}
+		
 		String path = "/WEB-INF/HomeProfessor.html";
-		request.getSession().setAttribute("professor", professor);
 		ServletContext servletContext = getServletContext();
 		final WebContext ctx = new WebContext(request, response, servletContext, request.getLocale());
-		ctx.clearVariables();
-		ctx.setVariable("professor", professor);
+		ctx.setVariable("courses", courses);
+		ctx.setVariable("chosenCourseId", chosenCourseId);
+		ctx.setVariable("appelli", appelli);
+
 		templateEngine.process(path, ctx, response.getWriter());
 	}
 

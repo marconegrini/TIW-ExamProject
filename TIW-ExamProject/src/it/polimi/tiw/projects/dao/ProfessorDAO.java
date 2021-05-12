@@ -58,4 +58,17 @@ public class ProfessorDAO {
 		}
 		return courses;
 	}
+	
+	public Integer findDefaultCourse(String professorId) throws SQLException {
+		String query = "SELECT courseId, code, name, professor FROM courses WHERE professor = ? ORDER BY name ASC LIMIT 1";
+		Integer cid = 0;
+		try (PreparedStatement pstatement = con.prepareStatement(query);) {
+			pstatement.setString(1, professorId);
+			try (ResultSet result = pstatement.executeQuery();) {
+				result.next();
+				cid = result.getInt("courseId");
+			}
+		}
+		return cid;
+	}
 }

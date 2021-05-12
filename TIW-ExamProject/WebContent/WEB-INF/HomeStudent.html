@@ -11,11 +11,11 @@
 	</div>
 	<h1>Welcome to the Student Home page</h1>
 	Nice to see you again 
-	<span th:text="${student.name}"></span>
-	<span th:text="${student.surname}"></span> <br>
-	<span th:text="${student.email}"></span> <br>
+	<span th:text="${session.student.name}"></span>
+	<span th:text="${session.student.surname}"></span> <br>
+	<span th:text="${session.student.email}"></span> <br>
 	Corso di laurea:
-	<span th:text="${student.corsoDiLaurea}"></span> <br>
+	<span th:text="${session.student.corsoDiLaurea}"></span> <br>
 	
 	
 </body>

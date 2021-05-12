@@ -11,8 +11,42 @@
 	</div>
 	<h1>Welcome to the Professor's Home Page</h1>
 	Nice to see you again
-	<span th:text="${professor.name}"></span>
-	<span th:text="${professor.surname}"></span>
+	<span th:text="${session.professor.name}"></span>
+	<span th:text="${session.professor.surname}"></span>
+	
+	<table>
+		<tr>
+			<td>
+				<table border="1">
+					<thead>
+						<tr>
+							<th>Course Code</th>
+							<th>Course Name</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr th:each="p : ${courses}" th:class="(${p.courseId} == ${chosenCourseId})? 'current'">
+							<td th:text="${p.code}"></td>
+							<td><a href="HomeProfessor.html" th:href="@{/GoToHomeProfessor(courseId=${p.courseId})}"><span
+									th:text="${p.name}"></span></a></td>
+						</tr>
+					</tbody>
+				</table>
+			</td>
+			<td>
+				<div th:if="${not #lists.isEmpty(appelli)}">
+					
+						Choose an appello for selected course <span th:text="${chosenCourseId}"></span>:
+						<br> <select name="appello">
+							<option th:each="a : ${appelli}" th:value="${a.date}"
+								th:text="${a.date}">worker100</option>
+							</select>
+					
+				</div>
+			</td>
+		</tr>
+	</table>
+	
 	
 </body>
 </html>
