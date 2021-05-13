@@ -20,8 +20,12 @@ import org.thymeleaf.context.WebContext;
 import org.thymeleaf.templatemode.TemplateMode;
 import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
 
+import it.polimi.tiw.projects.beans.Appello;
+import it.polimi.tiw.projects.beans.Course;
 import it.polimi.tiw.projects.beans.Student;
 import it.polimi.tiw.projects.beans.User;
+import it.polimi.tiw.projects.dao.CourseDAO;
+import it.polimi.tiw.projects.dao.ProfessorDAO;
 import it.polimi.tiw.projects.dao.StudentDAO;
 import it.polimi.tiw.projects.utils.ConnectionHandler;
 
@@ -59,13 +63,39 @@ public class GoToHomeStudent extends HttpServlet {
 			student = (Student) s.getAttribute("student");
 		}
 		
+		String chosenCourse = request.getParameter("courseId");
+		StudentDAO stud = new StudentDAO(connection);
+		List<Course> courses = null;
+		List<Appello> appelli = null;
+		Integer chosenCourseId = 0;
+		String chosenCourseName = "";
+		try {
+			courses = stud.findCourses(student.getId().toString());
+			if (chosenCourse == null) {
+				chosenCourseId = stud.findDefaultCourse(student.getId().toString());
+			} else {
+				chosenCourseId = Integer.parseInt(chosenCourse);
+			}
+			CourseDAO cDao = new CourseDAO(connection);
+			appelli = cDao.findAppelli(chosenCourseId.toString());
+			for(Course c : courses) 
+				if(c.getCourseId() == chosenCourseId)
+					chosenCourseName = c.getName();
+		} catch (SQLException e) {
+			// throw new ServletException(e);
+			response.sendError(HttpServletResponse.SC_BAD_GATEWAY, "Failure in student's courses database extraction");
+		}
+		
 		String path = "/WEB-INF/HomeStudent.html";
-		request.getSession().setAttribute("student", student);
 		ServletContext servletContext = getServletContext();
 		final WebContext ctx = new WebContext(request, response, servletContext, request.getLocale());
-		ctx.clearVariables();
-		ctx.setVariable("student", student);
+		ctx.setVariable("courses", courses);
+		ctx.setVariable("chosenCourseId", chosenCourseId);
+		ctx.setVariable("chosenCourseName", chosenCourseName);
+		ctx.setVariable("appelli", appelli);
+
 		templateEngine.process(path, ctx, response.getWriter());
+		
 	}
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)

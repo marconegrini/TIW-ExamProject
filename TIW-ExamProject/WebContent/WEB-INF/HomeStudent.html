@@ -17,6 +17,40 @@
 	Corso di laurea:
 	<span th:text="${session.student.corsoDiLaurea}"></span> <br>
 	
+	<table>
+		<tr>
+			<td>
+				<table border="1">
+					<thead>
+						<tr>
+							<th>Course Code</th>
+							<th>Course Name</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr th:each="p : ${courses}" th:class="(${p.courseId} == ${chosenCourseId})? 'current'">
+							<td th:text="${p.code}"></td>
+							<td><a href="HomeStudent.html" th:href="@{/GoToHomeStudent(courseId=${p.courseId})}"><span
+									th:text="${p.name}"></span></a></td>
+						</tr>
+					</tbody>
+				</table>
+			</td>
+			<td>
+				<div th:if="${not #lists.isEmpty(appelli)}">
+					
+						Choose an appello for <span th:text="${chosenCourseName}"></span>:
+						<br> <select name="appello">
+							<option th:each="a : ${appelli}" th:value="${a.date}"
+								th:text="${a.date}">worker100</option>
+							</select>
+					
+				</div>
+			</td>
+		</tr>
+	</table>
+	
+	
 	
 </body>
 </html>

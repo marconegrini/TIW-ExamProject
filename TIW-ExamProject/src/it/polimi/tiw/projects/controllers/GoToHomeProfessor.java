@@ -18,7 +18,6 @@ import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
 
 import java.util.List;
 import it.polimi.tiw.projects.beans.Professor;
-import it.polimi.tiw.projects.beans.User;
 import it.polimi.tiw.projects.beans.Appello;
 import it.polimi.tiw.projects.beans.Course;
 import it.polimi.tiw.projects.dao.CourseDAO;
@@ -65,6 +64,7 @@ public class GoToHomeProfessor extends HttpServlet {
 		List<Course> courses = null;
 		List<Appello> appelli = null;
 		Integer chosenCourseId = 0;
+		String chosenCourseName = "";
 		try {
 			courses = prof.findCourses(professor.getId().toString());
 			if (chosenCourse == null) {
@@ -74,6 +74,9 @@ public class GoToHomeProfessor extends HttpServlet {
 			}
 			CourseDAO cDao = new CourseDAO(connection);
 			appelli = cDao.findAppelli(chosenCourseId.toString());
+			for(Course c : courses) 
+				if(c.getCourseId() == chosenCourseId)
+					chosenCourseName = c.getName();
 		} catch (SQLException e) {
 			// throw new ServletException(e);
 			response.sendError(HttpServletResponse.SC_BAD_GATEWAY, "Failure in professor's courses database extraction");
@@ -84,6 +87,7 @@ public class GoToHomeProfessor extends HttpServlet {
 		final WebContext ctx = new WebContext(request, response, servletContext, request.getLocale());
 		ctx.setVariable("courses", courses);
 		ctx.setVariable("chosenCourseId", chosenCourseId);
+		ctx.setVariable("chosenCourseName", chosenCourseName);
 		ctx.setVariable("appelli", appelli);
 
 		templateEngine.process(path, ctx, response.getWriter());

@@ -36,7 +36,7 @@
 			<td>
 				<div th:if="${not #lists.isEmpty(appelli)}">
 					
-						Choose an appello for selected course <span th:text="${chosenCourseId}"></span>:
+						Choose an appello for <span th:text="${chosenCourseName}"></span>:
 						<br> <select name="appello">
 							<option th:each="a : ${appelli}" th:value="${a.date}"
 								th:text="${a.date}">worker100</option>

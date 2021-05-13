@@ -42,7 +42,7 @@ public class ProfessorDAO {
 	
 	public List<Course> findCourses(String professorId) throws SQLException {
 		List<Course> courses = new ArrayList<Course>();
-		String query = "SELECT courseId, code, name, professor FROM courses WHERE professor = ? ORDER BY name ASC";
+		String query = "SELECT courseId, code, name, professor FROM courses WHERE professor = ? ORDER BY name DESC";
 		try (PreparedStatement pstatement = con.prepareStatement(query);) {
 			pstatement.setString(1, professorId);
 			try (ResultSet result = pstatement.executeQuery();) {

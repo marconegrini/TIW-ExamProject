@@ -2,14 +2,14 @@ package it.polimi.tiw.projects.beans;
 
 public class Student {
 	
-	private int studentId;
+	private Integer studentId;
 	private String name;
 	private String surname;
 	private String email;
 	private String corsoDiLaurea;
 	
 
-	public int getId() {
+	public Integer getId() {
 		return studentId;
 	}
 

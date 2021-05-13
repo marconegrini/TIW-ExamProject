@@ -4,6 +4,10 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+
+import it.polimi.tiw.projects.beans.Course;
 import it.polimi.tiw.projects.beans.Student;
 
 public class StudentDAO {
@@ -35,5 +39,37 @@ public class StudentDAO {
 				}
 			}
 		}
+	}
+	
+	public List<Course> findCourses(String studentId) throws SQLException {
+		List<Course> courses = new ArrayList<Course>();
+		String query = "SELECT C.courseId, C.code, C.name, C.professor FROM courses AS C JOIN exams AS E WHERE C.courseId = E.course AND E.student = ? ORDER BY name DESC";
+		try (PreparedStatement pstatement = con.prepareStatement(query);) {
+			pstatement.setString(1, studentId);
+			try (ResultSet result = pstatement.executeQuery();) {
+				while (result.next()) {
+					Course course = new Course();
+					course.setCourseId(result.getInt("courseId"));
+					course.setCode(result.getString("code"));
+					course.setName(result.getString("name"));
+					course.setProfessorId(result.getInt("professor"));
+					courses.add(course);
+				}
+			}
+		}
+		return courses;
+	}
+	
+	public Integer findDefaultCourse(String studentId) throws SQLException {
+		String query = "SELECT C.courseId, C.code, C.name, C.professor FROM courses AS C JOIN exams AS E WHERE C.courseId = E.course AND E.student = ? ORDER BY name DESC";
+		Integer cid = 0;
+		try (PreparedStatement pstatement = con.prepareStatement(query);) {
+			pstatement.setString(1, studentId);
+			try (ResultSet result = pstatement.executeQuery();) {
+				result.next();
+				cid = result.getInt("courseId");
+			}
+		}
+		return cid;
 	}
 }
