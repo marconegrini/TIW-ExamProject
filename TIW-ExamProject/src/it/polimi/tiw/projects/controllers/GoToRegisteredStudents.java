@@ -82,14 +82,13 @@ public class GoToRegisteredStudents extends HttpServlet {
 		CourseDAO courseDao = new CourseDAO(connection);
 		List<Exam> registeredStudents = null;
 		try {
-			registeredStudents = courseDao.findRegisteredStudents(courseId.toString(), appello);
-			
+			registeredStudents = courseDao.findRegisteredStudents(courseId.toString(), appello);	
 		} catch (SQLException sqle) {
 			//sqle.printStackTrace();
 			response.sendError(HttpServletResponse.SC_BAD_GATEWAY, "Failure in registered students database extraction");
 		}
 		
-		
+		System.out.println(registeredStudents);
 		String path = "/WEB-INF/RegisteredStudents.html";
 		ServletContext servletContext = getServletContext();
 		final WebContext ctx = new WebContext(request, response, servletContext, request.getLocale());

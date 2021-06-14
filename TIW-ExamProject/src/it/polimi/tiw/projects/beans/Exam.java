@@ -9,6 +9,27 @@ public class Exam {
 	private Status status;
 	private Integer grade;
 	
+	public String getName() {
+		return student.getName();
+	}
+
+	public String getSurname() {
+		return student.getSurname();
+	}
+	
+	public Integer getStudentId() {
+		return student.getId();
+	}
+	
+	public String getEmail() {
+		return student.getEmail();
+	}
+	
+	public String getCorsoDiLaurea() {
+		return student.getCorsoDiLaurea();
+	}
+	
+	
 	public void setStudent(Student student) {
 		this.student = student;
 	}

@@ -8,5 +8,33 @@
 </head>
 <body>
 Registered student page
+
+		<div th:if="${not #lists.isEmpty(registeredStudents)}">
+				
+					<table border="1">
+						<thead>
+							<tr>
+								<th>Student id</th>
+								<th>Surname</th>
+								<th>Name</th>
+								<th>Email</th>
+								<th>Corso di laurea</th>
+								<th>Grade</th>
+								<th>Status</th>
+								</tr>
+						</thead>
+						<tbody>
+							<tr th:each="rs : ${registeredStudents}">
+								<td th:text="${rs.studentId}"></td>
+								<td th:text="${rs.surname}"></td>
+								<td th:text="${rs.name}"></td>
+								<td th:text="${rs.email}"></td>
+								<td th:text="${rs.corsoDiLaurea}"></td>
+								<td th:text="${rs.grade}"></td>
+								<td th:text="${rs.status}"></td>
+							</tr>
+						</tbody>
+					</table>
+ 		 </div> 
 </body>
 </html>
