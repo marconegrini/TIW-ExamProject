@@ -17,6 +17,31 @@
     <param-name>dbDriver</param-name>
     <param-value>com.mysql.cj.jdbc.Driver</param-value>
   </context-param>
+ <filter> 
+      <filter-name>SessionChecker</filter-name>
+      <filter-class>it.polimi.tiw.projects.filters.SessionChecker</filter-class> 
+ </filter> 
+<filter> 
+      <filter-name>ProfessorChecker</filter-name>
+      <filter-class>it.polimi.tiw.projects.filters.ProfessorChecker</filter-class> 
+ </filter> 
+<filter> 
+      <filter-name>StudentChecker</filter-name>
+      <filter-class>it.polimi.tiw.projects.filters.StudentChecker</filter-class> 
+ </filter> 
+ <filter-mapping> 
+    <filter-name>SessionChecker</filter-name> 
+    <url-pattern>/GoToHomeStudent</url-pattern> 
+    <url-pattern>/GoToHomeProfessor</url-pattern> 
+ </filter-mapping>
+<filter-mapping> 
+    <filter-name>ProfessorChecker</filter-name> 
+    <url-pattern>/GoToHomeProfessor</url-pattern> 
+ </filter-mapping>
+<filter-mapping> 
+    <filter-name>StudentChecker</filter-name> 
+    <url-pattern>/GoToHomeStudent</url-pattern> 
+ </filter-mapping>
   <welcome-file-list>
     <welcome-file>index.html</welcome-file>
   </welcome-file-list>

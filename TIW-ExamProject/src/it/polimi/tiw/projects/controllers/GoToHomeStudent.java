@@ -50,18 +50,11 @@ public class GoToHomeStudent extends HttpServlet {
 		templateResolver.setSuffix(".html");
 	}
 
+	
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		
-		String loginpath = getServletContext().getContextPath() + "/index.html";
-		Student student = null;
-		HttpSession s = request.getSession();
-		if (s.isNew() || s.getAttribute("student") == null) {
-			response.sendRedirect(loginpath);
-			return;
-		} else {
-			student = (Student) s.getAttribute("student");
-		}
+		Student student = (Student) request.getSession().getAttribute("student");
 		
 		String chosenCourse = request.getParameter("courseId");
 		StudentDAO stud = new StudentDAO(connection);

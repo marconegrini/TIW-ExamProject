@@ -47,17 +47,8 @@ public class GoToHomeProfessor extends HttpServlet {
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		
-		String loginpath = getServletContext().getContextPath() + "/index.html";
-		
-		Professor professor = null;
-		HttpSession s = request.getSession();
-		if (s.isNew() || s.getAttribute("professor") == null) {
-			response.sendRedirect(loginpath);
-			return;
-		} else {
-			professor = (Professor) s.getAttribute("professor");
-		}
+				
+		Professor professor = (Professor) request.getSession().getAttribute("professor");
 		
 		String chosenCourse = request.getParameter("courseId");
 		ProfessorDAO prof = new ProfessorDAO(connection);

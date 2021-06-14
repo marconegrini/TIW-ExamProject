@@ -30,6 +30,7 @@ import it.polimi.tiw.projects.utils.ConnectionHandler;
 public class CheckLogin extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private Connection connection = null;
+	//motore di interpretazione del template
 	private TemplateEngine templateEngine;
 
 
