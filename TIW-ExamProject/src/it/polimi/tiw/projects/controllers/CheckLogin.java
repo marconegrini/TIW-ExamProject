@@ -133,6 +133,7 @@ public class CheckLogin extends HttpServlet {
 				connection.close();
 			}
 		} catch (SQLException sqle) {
+			sqle.printStackTrace();
 			
 		}
 	}

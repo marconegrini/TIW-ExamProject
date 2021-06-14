@@ -37,4 +37,8 @@ public class CourseDAO {
 		}
 		return appelli;
 	}
+	
+	public List<Student> findStudentsByAppello(String courseId, String appello){
+		return null;
+	}
 }

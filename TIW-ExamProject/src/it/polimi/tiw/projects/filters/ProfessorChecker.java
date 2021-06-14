@@ -35,6 +35,7 @@ public class ProfessorChecker implements Filter{
 			res.sendRedirect(loginpath);
 			return;
 		}
+		
 		// pass the request along the filter chain
 		chain.doFilter(request, response);
 	}

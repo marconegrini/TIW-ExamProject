@@ -88,5 +88,15 @@ public class GoToHomeProfessor extends HttpServlet {
 			throws ServletException, IOException {
 		doGet(request, response);
 	}
+	
+	public void destroy() {
+		try {
+			if (connection != null) {
+				connection.close();
+			}
+		} catch (SQLException sqle) {
+			sqle.printStackTrace();
+		}
+	}
 
 }

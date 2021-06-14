@@ -37,11 +37,19 @@
 				<div th:if="${not #lists.isEmpty(appelli)}">
 					
 						Choose an appello for <span th:text="${chosenCourseName}"></span>:
-						<br> <select name="appello">
-							<option th:each="a : ${appelli}" th:value="${a.date}"
-								th:text="${a.date}">worker100</option>
-							</select>
-					
+							<table border="1">
+								<thead>
+									<tr>
+									<th>Date</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr th:each="a : ${appelli}">
+										<td th:text="${a.date}"></td>
+										<td><a th:href="@{/GoToRegisteredStudents(course=${a.courseId}, appello=${a.date})}">Details</a></td>
+									</tr>
+								</tbody>
+							</table>
 				</div>
 			</td>
 		</tr>

@@ -102,6 +102,7 @@ public class GoToHomeStudent extends HttpServlet {
 				connection.close();
 			}
 		} catch (SQLException sqle) {
+			sqle.printStackTrace();
 		}
 	}
 }
