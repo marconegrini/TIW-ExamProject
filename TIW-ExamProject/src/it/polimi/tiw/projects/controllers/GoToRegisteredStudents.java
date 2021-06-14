@@ -18,9 +18,12 @@ import org.thymeleaf.context.WebContext;
 import org.thymeleaf.templatemode.TemplateMode;
 import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
 
-import it.polimi.tiw.projects.beans.Professor;
-import it.polimi.tiw.projects.utils.ConnectionHandler;
+import java.util.List;
 
+import it.polimi.tiw.projects.beans.Professor;
+import it.polimi.tiw.projects.dao.CourseDAO;
+import it.polimi.tiw.projects.utils.ConnectionHandler;
+import it.polimi.tiw.projects.beans.*;
 /**
  * Servlet implementation class GotToRegisteredStudents
  */
@@ -64,11 +67,9 @@ public class GoToRegisteredStudents extends HttpServlet {
 			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Incorrect param values");
 			return;
 		}
-		String temp = null;
-		Date appello = null;
+		String appello = null;
 		try {
-			temp = request.getParameter("appello");
-			appello = Date.valueOf(temp);
+			appello = request.getParameter("appello");
 		} catch (IllegalArgumentException | NullPointerException e) {
 			// only for debugging e.printStackTrace();
 			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Incorrect param values");
@@ -78,11 +79,21 @@ public class GoToRegisteredStudents extends HttpServlet {
 		System.out.println("selected course id: " + courseId);
 		System.out.println("selected appello date: " + appello);
 		
+		CourseDAO courseDao = new CourseDAO(connection);
+		List<Exam> registeredStudents = null;
+		try {
+			registeredStudents = courseDao.findRegisteredStudents(courseId.toString(), appello);
+			
+		} catch (SQLException sqle) {
+			//sqle.printStackTrace();
+			response.sendError(HttpServletResponse.SC_BAD_GATEWAY, "Failure in registered students database extraction");
+		}
+		
 		
 		String path = "/WEB-INF/RegisteredStudents.html";
 		ServletContext servletContext = getServletContext();
 		final WebContext ctx = new WebContext(request, response, servletContext, request.getLocale());
-		ctx.setVariable("course", courseId);
+		ctx.setVariable("registeredStudents", registeredStudents);
 		this.templateEngine.process(path, ctx, response.getWriter());
 	}
 

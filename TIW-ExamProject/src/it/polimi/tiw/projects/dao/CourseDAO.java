@@ -1,14 +1,18 @@
 package it.polimi.tiw.projects.dao;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import it.polimi.tiw.projects.beans.Status;
+
 import it.polimi.tiw.projects.beans.Appello;
 import it.polimi.tiw.projects.beans.Course;
+import it.polimi.tiw.projects.beans.Exam;
 import it.polimi.tiw.projects.beans.Professor;
 import it.polimi.tiw.projects.beans.Student;
 
@@ -38,7 +42,29 @@ public class CourseDAO {
 		return appelli;
 	}
 	
-	public List<Student> findStudentsByAppello(String courseId, String appello){
-		return null;
+	public List<Exam> findRegisteredStudents(String courseId, String appello) throws SQLException{
+		List<Exam> registeredStudents = new ArrayList<Exam>();
+		String query = "SELECT S.studentId, S.name, S.surname, S.email, S.corsoDiLaurea, E.course, E.date, E.status, E.grade FROM exams AS E JOIN students AS S ON E.student = S.studentId  WHERE E.course = ? AND E.date = ?";
+		try (PreparedStatement pstatement = con.prepareStatement(query);) {
+			pstatement.setString(1, courseId);
+			pstatement.setString(2, appello);
+			try (ResultSet result = pstatement.executeQuery();) {
+				while (result.next()) {
+					Student student = new Student();
+					Exam exam = new Exam();
+					student.setId(result.getInt("studentId"));
+					student.setName(result.getString("name"));
+					student.setSurname(result.getString("surname"));
+					student.setEmail(result.getString("email"));
+					student.setCorsoDiLaurea(result.getString("corsoDiLaurea"));
+					exam.setCourseId(result.getInt("course"));
+					exam.setDate(result.getDate("date"));
+					exam.setStatus(Status.valueOf(result.getString("status")));
+					exam.setGrade(result.getInt("grade"));
+					exam.setStudent(student);
+				}
+			}
+		} 
+		return registeredStudents;
 	}
 }
