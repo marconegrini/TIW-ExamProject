@@ -46,7 +46,7 @@
 								<tbody>
 									<tr th:each="a : ${appelli}">
 										<td th:text="${a.date}"></td>
-										<td><a th:href="@{/GoToRegisteredStudents(course=${a.courseId}, appello=${a.date})}">Details</a></td>
+										<td><a th:href="@{/GoToRegisteredStudents(course=${a.courseId}, appello=${a.date}, courseName=${chosenCourseName})}">Details</a></td>
 									</tr>
 								</tbody>
 							</table>

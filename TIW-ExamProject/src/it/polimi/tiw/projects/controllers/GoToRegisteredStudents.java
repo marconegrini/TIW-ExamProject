@@ -20,7 +20,6 @@ import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
 
 import java.util.List;
 
-import it.polimi.tiw.projects.beans.Professor;
 import it.polimi.tiw.projects.dao.CourseDAO;
 import it.polimi.tiw.projects.utils.ConnectionHandler;
 import it.polimi.tiw.projects.beans.*;
@@ -32,6 +31,7 @@ public class GoToRegisteredStudents extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private Connection connection = null;
 	private TemplateEngine templateEngine;
+	private OrderType orderType;
        
     /**
      * @see HttpServlet#HttpServlet()
@@ -49,6 +49,7 @@ public class GoToRegisteredStudents extends HttpServlet {
 		this.templateEngine = new TemplateEngine();
 		this.templateEngine.setTemplateResolver(templateResolver);
 		templateResolver.setSuffix(".html");
+		orderType = new OrderType();
     }
 
 	/**
@@ -60,21 +61,53 @@ public class GoToRegisteredStudents extends HttpServlet {
 		
 		Professor professor = (Professor) request.getSession().getAttribute("professor");
 		Integer courseId = null;
+		String appello = null;
+		String courseName = null;
+		String sortBy = null;
 		try {
 			courseId = Integer.parseInt(request.getParameter("course"));
-		} catch (NumberFormatException | NullPointerException e) {
+			if(courseId < 0) throw new IllegalArgumentException();
+		} catch (NullPointerException | IllegalArgumentException e) {
 			// only for debugging e.printStackTrace();
-			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Incorrect param values");
+			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Incorrect course id value");
 			return;
 		}
-		String appello = null;
+		
 		try {
 			appello = request.getParameter("appello");
+			Date appelloDate = Date.valueOf(appello);
 		} catch (IllegalArgumentException | NullPointerException e) {
 			// only for debugging e.printStackTrace();
+			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Incorrect appello date value");
+			return;
+		}
+		
+		try {
+			courseName = request.getParameter("courseName");
+		} catch (IllegalArgumentException | NullPointerException e) {
+			// only for debugging e.printStackTrace();
+				response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Incorrect course name value");
+				return;
+		}
+		
+		Order order = null;
+		System.out.println(sortBy);
+		try {
+			sortBy = request.getParameter("sortBy");
+			if(sortBy == null) {
+				sortBy = "surname";
+				order = Order.ASC;
+			} else {
+				System.out.println(sortBy.toString());
+				order = orderType.getOrder(sortBy.toString());
+				orderType.updateOrder(sortBy.toString());
+			}
+		} catch (IllegalArgumentException e) {
+			e.printStackTrace();
 			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Incorrect param values");
 			return;
 		}
+		
 		System.out.println("professor: " + professor);
 		System.out.println("selected course id: " + courseId);
 		System.out.println("selected appello date: " + appello);
@@ -82,7 +115,7 @@ public class GoToRegisteredStudents extends HttpServlet {
 		CourseDAO courseDao = new CourseDAO(connection);
 		List<Exam> registeredStudents = null;
 		try {
-			registeredStudents = courseDao.findRegisteredStudents(courseId.toString(), appello);	
+			registeredStudents = courseDao.findRegisteredStudents(courseId.toString(), appello, sortBy, order.toString());	
 		} catch (SQLException sqle) {
 			//sqle.printStackTrace();
 			response.sendError(HttpServletResponse.SC_BAD_GATEWAY, "Failure in registered students database extraction");
@@ -92,7 +125,11 @@ public class GoToRegisteredStudents extends HttpServlet {
 		String path = "/WEB-INF/RegisteredStudents.html";
 		ServletContext servletContext = getServletContext();
 		final WebContext ctx = new WebContext(request, response, servletContext, request.getLocale());
+		ctx.clearVariables();
 		ctx.setVariable("registeredStudents", registeredStudents);
+		ctx.setVariable("appello", appello);
+		ctx.setVariable("courseName", courseName);
+		ctx.setVariable("course", courseId);
 		this.templateEngine.process(path, ctx, response.getWriter());
 	}
 

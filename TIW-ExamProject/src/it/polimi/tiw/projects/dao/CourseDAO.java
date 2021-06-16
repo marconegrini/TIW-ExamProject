@@ -8,6 +8,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.mysql.cj.x.protobuf.MysqlxCrud.Order;
+
 import it.polimi.tiw.projects.beans.Status;
 
 import it.polimi.tiw.projects.beans.Appello;
@@ -40,9 +42,58 @@ public class CourseDAO {
 		return appelli;
 	}
 	
-	public List<Exam> findRegisteredStudents(String courseId, String appello) throws SQLException{
+	public List<Exam> findRegisteredStudents(String courseId, String appello, String sortBy, String order) throws SQLException{
 		List<Exam> registeredStudents = new ArrayList<Exam>();
-		String query = "SELECT studentId, name, surname, email, corsoDiLaurea, course, date, status, grade FROM exams, students  WHERE student = studentId AND course = ? AND date = ?";
+		String query = null;
+		if(order.equals("ASC")) {
+			switch(sortBy) {
+			case "studentId":
+				query = "SELECT studentId, name, surname, email, corsoDiLaurea, course, date, status, grade FROM exams, students  WHERE student = studentId AND course = ? AND date = ? ORDER BY studentId ASC";
+				break;
+			case "surname":
+				query = "SELECT studentId, name, surname, email, corsoDiLaurea, course, date, status, grade FROM exams, students  WHERE student = studentId AND course = ? AND date = ? ORDER BY surname ASC";
+				break;
+			case "name":
+				query = "SELECT studentId, name, surname, email, corsoDiLaurea, course, date, status, grade FROM exams, students  WHERE student = studentId AND course = ? AND date = ? ORDER BY name ASC";
+				break;
+			case "email":
+				query = "SELECT studentId, name, surname, email, corsoDiLaurea, course, date, status, grade FROM exams, students  WHERE student = studentId AND course = ? AND date = ? ORDER BY email ASC";
+				break;
+			case "corsoDiLaurea":
+				query = "SELECT studentId, name, surname, email, corsoDiLaurea, course, date, status, grade FROM exams, students  WHERE student = studentId AND course = ? AND date = ? ORDER BY corsoDiLaurea ASC";
+				break;
+			case "grade":
+				query = "SELECT studentId, name, surname, email, corsoDiLaurea, course, date, status, grade FROM exams, students  WHERE student = studentId AND course = ? AND date = ? ORDER BY grade ASC";
+				break;
+			case "status":
+				query = "SELECT studentId, name, surname, email, corsoDiLaurea, course, date, status, grade FROM exams, students  WHERE student = studentId AND course = ? AND date = ? ORDER BY status ASC";
+				break;
+			}
+		} else {
+			switch(sortBy) {
+			case "studentId":
+				query = "SELECT studentId, name, surname, email, corsoDiLaurea, course, date, status, grade FROM exams, students  WHERE student = studentId AND course = ? AND date = ? ORDER BY studentId DESC";
+				break;
+			case "surname":
+				query = "SELECT studentId, name, surname, email, corsoDiLaurea, course, date, status, grade FROM exams, students  WHERE student = studentId AND course = ? AND date = ? ORDER BY surname DESC";
+				break;
+			case "name":
+				query = "SELECT studentId, name, surname, email, corsoDiLaurea, course, date, status, grade FROM exams, students  WHERE student = studentId AND course = ? AND date = ? ORDER BY name DESC";
+				break;
+			case "email":
+				query = "SELECT studentId, name, surname, email, corsoDiLaurea, course, date, status, grade FROM exams, students  WHERE student = studentId AND course = ? AND date = ? ORDER BY email DESC";
+				break;
+			case "corsoDiLaurea":
+				query = "SELECT studentId, name, surname, email, corsoDiLaurea, course, date, status, grade FROM exams, students  WHERE student = studentId AND course = ? AND date = ? ORDER BY corsoDiLaurea DESC";
+				break;
+			case "grade":
+				query = "SELECT studentId, name, surname, email, corsoDiLaurea, course, date, status, grade FROM exams, students  WHERE student = studentId AND course = ? AND date = ? ORDER BY grade DESC";
+				break;
+			case "status":
+				query = "SELECT studentId, name, surname, email, corsoDiLaurea, course, date, status, grade FROM exams, students  WHERE student = studentId AND course = ? AND date = ? ORDER BY status DESC";
+				break;
+			}
+		}
 		try (PreparedStatement pstatement = con.prepareStatement(query);) {
 			pstatement.setString(1, courseId);
 			pstatement.setString(2, appello);
@@ -65,17 +116,14 @@ public class CourseDAO {
 			}
 		} 
 		
+		System.out.println(sortBy + " " + order + " order performed");
 		for(Exam e : registeredStudents) {
-			System.out.println(e.getCourseId());
-			System.out.println(e.getDate());
-			System.out.println(e.getStatus());
-			System.out.println(e.getGrade());
-			System.out.println(e.getStudent().getName());
-			System.out.println(e.getStudent().getSurname());
-			System.out.println(e.getStudent().getEmail());
-			System.out.println(e.getStudent().getCorsoDiLaurea());
+			System.out.println(e.getName());
+			System.out.println(e.getSurname());
+			System.out.println(e.getCorsoDiLaurea());
 		}
-		
 		return registeredStudents;
 	}
+	
+	
 }
