@@ -63,6 +63,15 @@ public class GoToExamDetails extends HttpServlet {
 		} catch (SQLException sqle) {
 				response.sendError(HttpServletResponse.SC_BAD_GATEWAY, "Failure in exam database extraction");
 		}
+		
+		String courseName = null;
+		try {
+			courseName = request.getParameter("courseName");
+		} catch (NullPointerException e) {
+			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Incorrect param values");
+			return;
+		}
+		
 		String[] grades = {"ASSENTE", "RIMANDATO", "RIPROVATO", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "30 E LODE"};
 		
 		String path = "/WEB-INF/ExamDetails.html";
@@ -71,6 +80,7 @@ public class GoToExamDetails extends HttpServlet {
 		ctx.clearVariables();
 		ctx.setVariable("exam", exam);
 		ctx.setVariable("grades", grades);
+		ctx.setVariable("courseName", courseName);
 		this.templateEngine.process(path, ctx, response.getWriter());
 	}
 		

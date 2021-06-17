@@ -45,7 +45,7 @@ public class Exam {
 		return this.appello.getDate().toString();
 	}
 	
-	public int getAppelloId() {
+	public Integer getAppelloId() {
 		return this.appello.getAppelloId();
 	}
 	

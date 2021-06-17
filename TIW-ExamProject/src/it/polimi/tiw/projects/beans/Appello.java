@@ -3,11 +3,11 @@ package it.polimi.tiw.projects.beans;
 import java.sql.Date;
 
 public class Appello {
-	private int appelloId;
+	private Integer appelloId;
 	private int courseId;
 	private Date date;
 	
-	public int getAppelloId() {
+	public Integer getAppelloId() {
 		return appelloId;
 	}
 	
@@ -19,7 +19,7 @@ public class Appello {
 		return date.toString();
 	}
 	
-	public void setAppelloId(int appelloId) {
+	public void setAppelloId(Integer appelloId) {
 		this.appelloId = appelloId;
 	}
 	

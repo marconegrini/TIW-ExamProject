@@ -60,20 +60,11 @@ public class GoToRegisteredStudents extends HttpServlet {
 		// TODO Auto-generated method stub
 		
 		Professor professor = (Professor) request.getSession().getAttribute("professor");
-		Integer courseId = null;
 		Integer appelloId = null;
 		String appello = null;
 		Date appelloDate = null;
 		String courseName = null;
 		String sortBy = null;
-		try {
-			courseId = Integer.parseInt(request.getParameter("courseId"));
-			if(courseId < 0) throw new IllegalArgumentException();
-		} catch (NullPointerException | IllegalArgumentException e) {
-			// only for debugging e.printStackTrace();
-			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Incorrect course id value");
-			return;
-		}
 		
 		try {
 			appello = request.getParameter("appelloDate");
@@ -115,13 +106,12 @@ public class GoToRegisteredStudents extends HttpServlet {
 				orderType.updateOrder(sortBy.toString());
 			}
 		} catch (IllegalArgumentException e) {
-			e.printStackTrace();
+			//e.printStackTrace();
 			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Incorrect param values");
 			return;
 		}
 		
 		System.out.println("professor: " + professor);
-		System.out.println("selected course id: " + courseId);
 		System.out.println("selected appello date: " + appello);
 		
 		CourseDAO courseDao = new CourseDAO(connection);
@@ -145,7 +135,6 @@ public class GoToRegisteredStudents extends HttpServlet {
 		ctx.setVariable("registeredStudents", registeredStudents);
 		ctx.setVariable("appelloDate", appelloDate);
 		ctx.setVariable("courseName", courseName);
-		ctx.setVariable("courseId", courseId);
 		ctx.setVariable("appelloId", appelloId);
 		this.templateEngine.process(path, ctx, response.getWriter());
 	}

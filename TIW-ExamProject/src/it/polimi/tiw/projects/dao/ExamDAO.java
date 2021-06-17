@@ -52,4 +52,13 @@ public class ExamDAO {
 		
 		return exam;
 	}
+	
+	public void insertGrade(String grade, Integer examId) throws SQLException{
+		String query = "UPDATE exams SET grade = ?, status = 'INSERITO' WHERE examId = ?";
+		try (PreparedStatement pstatement = con.prepareStatement(query);){
+			pstatement.setString(1, grade);
+			pstatement.setInt(2, examId);
+			pstatement.executeUpdate();
+		}
+	}
 }
