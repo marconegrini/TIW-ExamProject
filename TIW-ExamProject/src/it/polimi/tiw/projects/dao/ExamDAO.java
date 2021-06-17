@@ -61,4 +61,20 @@ public class ExamDAO {
 			pstatement.executeUpdate();
 		}
 	}
+	
+	public void pubblica(Integer appelloId) throws SQLException {
+		String query = "UPDATE exams SET status = 'PUBBLICATO' WHERE appelloId = ? AND status = 'INSERITO'";
+		try (PreparedStatement pstatement = con.prepareStatement(query);){
+			pstatement.setInt(1, appelloId);
+			pstatement.executeUpdate();
+		}
+	}
+	
+	public void verbalizza(Integer appelloId) throws SQLException {
+		String query = "UPDATE exams SET status = 'VERBALIZZATO' WHERE appelloId = ? AND (status = 'PUBBLICATO' OR STATUS = 'RIFIUTATO')";
+		try (PreparedStatement pstatement = con.prepareStatement(query);){
+			pstatement.setInt(1, appelloId);
+			pstatement.executeUpdate();
+		}
+	}
 }

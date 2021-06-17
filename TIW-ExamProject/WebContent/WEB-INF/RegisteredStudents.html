@@ -41,9 +41,7 @@
 								<th>
 								<a href="RegisteredStudents.html" th:href="@{/GoToRegisteredStudents(sortBy='status', appelloDate=${appelloDate}, appelloId=${appelloId}, courseName=${courseName})}">Status</a>
 								</th>
-								<th>
-								Exam details
-								</th>
+								<th>     </th>
 								</tr>
 						</thead>
 						<tbody>
@@ -59,6 +57,9 @@
 							</tr>
 						</tbody>
 					</table>
+					<a th:href="@{/Pubblica(appelloId=${appelloId}, appelloDate=${appelloDate}, courseName=${courseName})}">Pubblica</a> <br>
+					<a th:href="@{/Verbalizza(appelloId=${appelloId}, appelloDate=${appelloDate}, courseName=${courseName})}">Verbalizza</a>
+					
  		 </div> 
 </body>
 </html>

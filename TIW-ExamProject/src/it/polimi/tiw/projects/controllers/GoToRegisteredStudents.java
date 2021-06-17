@@ -111,9 +111,6 @@ public class GoToRegisteredStudents extends HttpServlet {
 			return;
 		}
 		
-		System.out.println("professor: " + professor);
-		System.out.println("selected appello date: " + appello);
-		
 		CourseDAO courseDao = new CourseDAO(connection);
 		List<Exam> registeredStudents = null;
 		try {

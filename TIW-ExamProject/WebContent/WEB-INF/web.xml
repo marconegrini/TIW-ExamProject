@@ -35,12 +35,19 @@
     <url-pattern>/GoToHomeProfessor</url-pattern> 
     <url-pattern>/GoToRegisteredStudents</url-pattern> 
     <url-pattern>/GoToExamResult</url-pattern> 
+	<url-pattern>/Pubblica</url-pattern> 
+	<url-pattern>/UpdateGrade</url-pattern> 
+	<url-pattern>/Verbalizza</url-pattern> 
 
  </filter-mapping>
 <filter-mapping> 
     <filter-name>ProfessorChecker</filter-name> 
     <url-pattern>/GoToHomeProfessor</url-pattern>
     <url-pattern>/GoToRegisteredStudents</url-pattern>  
+	<url-pattern>/UpdateGrade</url-pattern> 
+	<url-pattern>/Pubblica</url-pattern> 
+	<url-pattern>/Verbalizza</url-pattern>
+	<url-pattern>/GoToExamDetails</url-pattern>  
  </filter-mapping>
 <filter-mapping> 
     <filter-name>StudentChecker</filter-name> 

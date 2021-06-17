@@ -3,6 +3,7 @@ package it.polimi.tiw.projects.controllers;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.sql.Date;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -16,15 +17,14 @@ import org.thymeleaf.templatemode.TemplateMode;
 import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
 
 import it.polimi.tiw.projects.beans.Exam;
-import it.polimi.tiw.projects.beans.OrderType;
 import it.polimi.tiw.projects.dao.ExamDAO;
 import it.polimi.tiw.projects.utils.ConnectionHandler;
 
 /**
- * Servlet implementation class UpdateGrade
+ * Servlet implementation class Pubblica
  */
-@WebServlet("/UpdateGrade")
-public class UpdateGrade extends HttpServlet {
+@WebServlet("/Verbalizza")
+public class Verbalizza extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private Connection connection = null;
 	private TemplateEngine templateEngine;
@@ -32,7 +32,7 @@ public class UpdateGrade extends HttpServlet {
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public UpdateGrade() {
+    public Verbalizza() {
         super();
         // TODO Auto-generated constructor stub
     }
@@ -51,43 +51,40 @@ public class UpdateGrade extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		doPost(request, response);
+		
+		ExamDAO examDao = new ExamDAO(connection);
+		Integer appelloId = null;
+		Date appelloDate = null;
+		String courseName = null;
+		
+		try {
+			appelloId = Integer.parseInt(request.getParameter("appelloId"));
+			appelloDate = Date.valueOf(request.getParameter("appelloDate"));
+			courseName = request.getParameter("courseName");
+		} catch (IllegalArgumentException | NullPointerException e) {
+			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid parameter value");
+			return;
+		}
+		
+		try {
+			examDao.verbalizza(appelloId);
+		} catch(SQLException sqle) {
+			response.sendError(HttpServletResponse.SC_BAD_GATEWAY, "Database failure while updating grade");
+			return;
+		}
+	
+		String ctxpath = getServletContext().getContextPath();
+		String path = ctxpath + "/GoToRegisteredStudents?appelloDate=" + appelloDate + "&appelloId=" + appelloId.toString() + "&courseName=" + courseName;
+		response.sendRedirect(path);
 	}
 
 	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		
-		Integer examId = null;
-		String grade = null;
-		String courseName = null;
-		try {
-			examId = Integer.parseInt(request.getParameter("examId"));
-			grade = request.getParameter("grade");
-			courseName = request.getParameter("courseName");
-		} catch (IllegalArgumentException | NullPointerException e) {
-			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid parameter value");
-			return;
-		}
-		System.out.println(grade);
-		System.out.println(examId);
-		Exam exam = null;
-		ExamDAO examDao = new ExamDAO(connection);
-		try {
-			exam = examDao.findExamById(examId.toString());
-			examDao.insertGrade(grade, examId);
-		} catch (SQLException sqle) {
-			sqle.printStackTrace();
-			response.sendError(HttpServletResponse.SC_BAD_GATEWAY, "Database failure while updating grade");
-			return;
-		}
-		
-		String ctxpath = getServletContext().getContextPath();
-		String path = ctxpath + "/GoToRegisteredStudents?appelloDate=" + exam.getDate() + "&appelloId=" + exam.getAppelloId().toString() + "&courseName=" + courseName;
-		response.sendRedirect(path);
+		// TODO Auto-generated method stub
+		doGet(request, response);
 	}
-	
 	public void destroy() {
 		try {
 			if (connection != null) {
