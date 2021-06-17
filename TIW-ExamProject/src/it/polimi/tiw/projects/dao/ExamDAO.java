@@ -18,11 +18,11 @@ public class ExamDAO {
 		this.con = connection;
 	}
 
-	public Exam findExamById(Integer examId) throws SQLException {
+	public Exam findExamById(String examId) throws SQLException {
 		Exam exam = new Exam();
 		String query =	"SELECT S.studentId, S.name, S.surname, S.email, S.corsoDiLaurea, A.courseId, A.appelloId, A.date, E.examId, E.status, E.grade FROM exams AS E, students AS S, appelli AS A  WHERE E.student = S.studentId AND E.appelloId = A.appelloId AND E.examId = ?";
 		try (PreparedStatement pstatement = con.prepareStatement(query);) {
-			pstatement.setString(1, examId.toString());
+			pstatement.setString(1, examId);
 			try (ResultSet result = pstatement.executeQuery();) {
 				if (!result.isBeforeFirst()) // no results, credential check failed
 					return null;

@@ -33,26 +33,6 @@ public class Exam {
 		return student.getCorsoDiLaurea();
 	}
 	
-	public void setExamId(int examId) {
-		this.examId = examId;
-	}
-	
-	public void setStudent(Student student) {
-		this.student = student;
-	}
-	
-	public void setAppello(Appello appello) {
-		this.appello = appello;
-	}
-	
-	public void setStatus(Status status) {
-		this.status = status;
-	}
-	
-	public void setGrade(String grade) {
-		this.grade = grade;
-	}
-	
 	public Student getStudent() {
 		return this.student;
 	}
@@ -77,5 +57,24 @@ public class Exam {
 		return this.grade;
 	}
 	
+	public void setExamId(int examId) {
+		this.examId = examId;
+	}
+	
+	public void setStudent(Student student) {
+		this.student = student;
+	}
+	
+	public void setAppello(Appello appello) {
+		this.appello = appello;
+	}
+	
+	public void setStatus(Status status) {
+		this.status = status;
+	}
+	
+	public void setGrade(String grade) {
+		this.grade = grade;
+	}
 	
 }

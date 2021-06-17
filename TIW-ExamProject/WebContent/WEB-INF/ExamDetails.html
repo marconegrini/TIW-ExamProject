@@ -6,6 +6,34 @@
 <link rel="stylesheet" type="text/css" media="all" href="../CSS/mystyle.css" th:href="@{/css/mystyle.css}" />
 </head>
 <body>
+<div align="right">
+		<a th:href="@{/Logout}">Logout</a>
+	</div>
+	Student: 
+	<span th:text="${exam.name}"></span> 
+	<span th:text="${exam.surname}"></span> <br>
+	Student id:
+	<span th:text="${exam.studentId}"></span> <br>
+	Student email:
+	<span th:text="${exam.email}"></span> <br>
+	Corso di laurea:
+	<span th:text="${exam.corsoDiLaurea}"></span> <br>
+	
+	
+	
+	<form th:action="
+		@{/UpdateGrade}" method="POST">
+			Select a grade:
+	 <br> <select name="grade">
+				<option th:each="g : ${grades}" th:value="${g}"
+					th:text="${g}">grade</option>
+			</select> <br> Specify max n. of hours: 
+			<input type="text" name="maxhours" required> <br> 
+				<input type="hidden" name="projectid" th:value="${projectid}"> <input
+				type="submit" name="submit" value="Submit Assignment">
+	</form>
+	
+
 
 </body>
 </html>
