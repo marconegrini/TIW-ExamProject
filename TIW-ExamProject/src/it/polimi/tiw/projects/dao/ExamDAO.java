@@ -53,6 +53,32 @@ public class ExamDAO {
 		return exam;
 	}
 	
+	/**
+	 * Returns an {@link Exam Exam} given its student and its appello.
+	 * 
+	 * @param studentId	The student who took the exam.
+	 * @param appelloId	The appello in which the student took the exam.
+	 * @return	The exam id if everything's ok, null otherwise.
+	 * @throws SQLException	If query fails.
+	 */
+	public Integer getExamIdByStudentAndSession(Integer studentId, Integer appelloId) throws SQLException {
+		Integer id = null;
+		String query = "SELECT E.examId from exams AS E WHERE E.student = ? AND E.appelloId = ?";
+		
+		try (PreparedStatement pstatement = con.prepareStatement(query)) {
+			pstatement.setInt(1, studentId);
+			pstatement.setInt(2, appelloId);
+			try (ResultSet result = pstatement.executeQuery()) {
+				if (!result.isBeforeFirst()) return null;
+				result.next();
+				id = result.getInt("examId");
+				result.last();
+				if (result.getRow() > 1) return null; // more than one record found, invalid query
+			}
+		}
+		return id;
+	}
+	
 	public void insertGrade(String grade, Integer examId) throws SQLException{
 		String query = "UPDATE exams SET grade = ?, status = 'INSERITO' WHERE examId = ?";
 		try (PreparedStatement pstatement = con.prepareStatement(query);){

@@ -17,7 +17,12 @@ import org.thymeleaf.context.WebContext;
 import org.thymeleaf.templatemode.TemplateMode;
 import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
 
+import it.polimi.tiw.projects.beans.Appello;
+import it.polimi.tiw.projects.beans.Course;
+import it.polimi.tiw.projects.beans.Exam;
 import it.polimi.tiw.projects.beans.Student;
+import it.polimi.tiw.projects.dao.CourseDAO;
+import it.polimi.tiw.projects.dao.ExamDAO;
 import it.polimi.tiw.projects.utils.ConnectionHandler;
 
 /**
@@ -61,23 +66,53 @@ public class GoToExamResult extends HttpServlet {
 			return;
 		}
 		String temp = null;
-		Date appello = null;
+		Date appelloDate = null;
 		try {
 			temp = request.getParameter("appello");
-			appello = Date.valueOf(temp);
+			appelloDate = Date.valueOf(temp);
 		} catch (IllegalArgumentException | NullPointerException e) {
 			// only for debugging e.printStackTrace();
 			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Incorrect param values");
 			return;
 		}
+		
+		Exam exam = null;
+		Course course = null;
+		
+		try {
+			ExamDAO examDao = new ExamDAO(connection);
+			CourseDAO courseDao = new CourseDAO(connection);
+			Appello appello = courseDao.findAppello(courseId, appelloDate);
+			if (appello == null) {
+				response.sendError(HttpServletResponse.SC_NOT_FOUND, "Exam not found");
+				return;
+			}
+			
+			Integer examId = examDao.getExamIdByStudentAndSession(student.getId(), appello.getAppelloId());
+			if(examId == null) {
+				response.sendError(HttpServletResponse.SC_NOT_FOUND, "Exam not found");
+				return;
+			} 
+			
+			exam = examDao.findExamById(examId.toString());
+			if(exam == null) {
+				response.sendError(HttpServletResponse.SC_NOT_FOUND, "Exam not found");
+				return;
+			} 
+		} catch (SQLException sqle) {
+				response.sendError(HttpServletResponse.SC_BAD_GATEWAY, "Failure in exam database extraction");
+		}
+		
 		System.out.println("student: " + student);
 		System.out.println("selected course id: " + courseId);
-		System.out.println("selected appello date: " + appello);
+		System.out.println("selected appello date: " + appelloDate);
+		
+		// TODO: get grade!
 		
 		String path = "/WEB-INF/ExamResult.html";
 		ServletContext servletContext = getServletContext();
 		final WebContext ctx = new WebContext(request, response, servletContext, request.getLocale());
-		ctx.setVariable("course", courseId);
+		ctx.setVariable("exam", exam);
 		this.templateEngine.process(path, ctx, response.getWriter());
 	}
 

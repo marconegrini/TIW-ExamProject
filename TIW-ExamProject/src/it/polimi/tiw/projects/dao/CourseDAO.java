@@ -13,6 +13,7 @@ import com.mysql.cj.x.protobuf.MysqlxCrud.Order;
 import it.polimi.tiw.projects.beans.Status;
 
 import it.polimi.tiw.projects.beans.Appello;
+import it.polimi.tiw.projects.beans.Course;
 import it.polimi.tiw.projects.beans.Exam;
 import it.polimi.tiw.projects.beans.Student;
 
@@ -22,6 +23,40 @@ public class CourseDAO {
 
 	public CourseDAO(Connection connection) {
 		this.con = connection;
+	}
+	
+	public Course findCourseById(Integer id) {
+		Course course = null;
+		// TODO and modify Course class to store information about professor
+		return course;
+		
+	}
+	
+	/**
+	 * Returns an {@link Appello Appello} given its course and its date.
+	 * 
+	 * @param courseId	The id of the course to search for.
+	 * @param date		The date of the exam to search for.
+	 * @return	An instance of {@link Appello Appello} if everything is ok; null otherwise.
+	 * @throws SQLException	If query fails.
+	 */
+	public Appello findAppello(Integer courseId, Date date) throws SQLException {
+		Appello appello = new Appello();
+		String query = "SELECT appelloId, courseId, date FROM appelli WHERE courseId = ? AND date = ?";
+		try (PreparedStatement pstatement = con.prepareStatement(query)) {
+			pstatement.setInt(1, courseId);
+			pstatement.setDate(2, date);
+			try (ResultSet result = pstatement.executeQuery()) {
+				if (!result.isBeforeFirst()) return null;
+				result.next();
+				appello.setAppelloId(result.getInt("appelloId"));
+				appello.setCourseId(result.getInt("courseId"));
+				appello.setDate(result.getDate("date"));
+				result.last();
+				if (result.getRow() > 1) return null; // more than one record found, invalid query
+			}
+		}
+		return appello;
 	}
 
 	//finds appelli related to the specified course
