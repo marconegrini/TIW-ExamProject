@@ -27,14 +27,15 @@ public class CourseDAO {
 	//finds appelli related to the specified course
 	public List<Appello> findAppelli(String courseId) throws SQLException {
 		List<Appello> appelli = new ArrayList<Appello>();
-		String query = "SELECT course, date FROM appelli WHERE course = ? ORDER BY date DESC";
+		String query = "SELECT appelloId, courseId, date FROM appelli WHERE courseId = ? ORDER BY date DESC";
 		try (PreparedStatement pstatement = con.prepareStatement(query);) {
 			pstatement.setString(1, courseId);
 			try (ResultSet result = pstatement.executeQuery();) {
 				while (result.next()) {
 					Appello appello = new Appello();
-					appello.setCourseId(result.getInt("course"));
+					appello.setCourseId(result.getInt("courseId"));
 					appello.setDate(result.getDate("date"));
+					appello.setAppelloId(result.getInt("appelloId"));
 					appelli.add(appello);
 				}
 			}
@@ -42,75 +43,82 @@ public class CourseDAO {
 		return appelli;
 	}
 	
-	public List<Exam> findRegisteredStudents(String courseId, String appello, String sortBy, String order) throws SQLException{
+	public List<Exam> findRegisteredStudents(Integer appelloId, String sortBy, String order) throws SQLException{
 		List<Exam> registeredStudents = new ArrayList<Exam>();
 		String query = null;
 		if(order.equals("ASC")) {
 			switch(sortBy) {
 			case "studentId":
-				query = "SELECT studentId, name, surname, email, corsoDiLaurea, course, date, status, grade FROM exams, students  WHERE student = studentId AND course = ? AND date = ? ORDER BY studentId ASC";
+				query = "SELECT S.studentId, S.name, S.surname, S.email, S.corsoDiLaurea, A.courseId, A.appelloId, A.date, E.examId, E.status, E.grade FROM exams AS E, students AS S, appelli AS A  WHERE E.student = S.studentId AND E.appelloId = A.appelloId AND A.appelloId = ? ORDER BY studentId ASC";
 				break;
 			case "surname":
-				query = "SELECT studentId, name, surname, email, corsoDiLaurea, course, date, status, grade FROM exams, students  WHERE student = studentId AND course = ? AND date = ? ORDER BY surname ASC";
+				query = "SELECT S.studentId, S.name, S.surname, S.email, S.corsoDiLaurea, A.courseId, A.appelloId, A.date, E.examId, E.status, E.grade FROM exams AS E, students AS S, appelli AS A  WHERE E.student = S.studentId AND E.appelloId = A.appelloId AND A.appelloId = ? ORDER BY surname ASC";
 				break;
 			case "name":
-				query = "SELECT studentId, name, surname, email, corsoDiLaurea, course, date, status, grade FROM exams, students  WHERE student = studentId AND course = ? AND date = ? ORDER BY name ASC";
+				query = "SELECT S.studentId, S.name, S.surname, S.email, S.corsoDiLaurea, A.courseId, A.appelloId, A.date, E.examId, E.status, E.grade FROM exams AS E, students AS S, appelli AS A  WHERE E.student = S.studentId AND E.appelloId = A.appelloId AND A.appelloId = ? ORDER BY name ASC";
 				break;
 			case "email":
-				query = "SELECT studentId, name, surname, email, corsoDiLaurea, course, date, status, grade FROM exams, students  WHERE student = studentId AND course = ? AND date = ? ORDER BY email ASC";
+				query = "SELECT S.studentId, S.name, S.surname, S.email, S.corsoDiLaurea, A.courseId, A.appelloId, A.date, E.examId, E.status, E.grade FROM exams AS E, students AS S, appelli AS A  WHERE E.student = S.studentId AND E.appelloId = A.appelloId AND A.appelloId = ? ORDER BY email ASC";
 				break;
 			case "corsoDiLaurea":
-				query = "SELECT studentId, name, surname, email, corsoDiLaurea, course, date, status, grade FROM exams, students  WHERE student = studentId AND course = ? AND date = ? ORDER BY corsoDiLaurea ASC";
+				query = "SELECT S.studentId, S.name, S.surname, S.email, S.corsoDiLaurea, A.courseId, A.appelloId, A.date, E.examId, E.status, E.grade FROM exams AS E, students AS S, appelli AS A  WHERE E.student = S.studentId AND E.appelloId = A.appelloId AND A.appelloId = ? ORDER BY corsoDiLaurea ASC";
 				break;
 			case "grade":
-				query = "SELECT studentId, name, surname, email, corsoDiLaurea, course, date, status, grade FROM exams, students  WHERE student = studentId AND course = ? AND date = ? ORDER BY grade ASC";
+				query = "SELECT S.studentId, S.name, S.surname, S.email, S.corsoDiLaurea, A.courseId, A.appelloId, A.date, E.examId, E.status, E.grade FROM exams AS E, students AS S, appelli AS A  WHERE E.student = S.studentId AND E.appelloId = A.appelloId AND A.appelloId = ? ORDER BY grade ASC";
 				break;
 			case "status":
-				query = "SELECT studentId, name, surname, email, corsoDiLaurea, course, date, status, grade FROM exams, students  WHERE student = studentId AND course = ? AND date = ? ORDER BY status ASC";
+				query = "SELECT S.studentId, S.name, S.surname, S.email, S.corsoDiLaurea, A.courseId, A.appelloId, A.date, E.examId, E.status, E.grade FROM exams AS E, students AS S, appelli AS A  WHERE E.student = S.studentId AND E.appelloId = A.appelloId AND A.appelloId = ? ORDER BY status ASC";
 				break;
 			}
 		} else {
 			switch(sortBy) {
 			case "studentId":
-				query = "SELECT studentId, name, surname, email, corsoDiLaurea, course, date, status, grade FROM exams, students  WHERE student = studentId AND course = ? AND date = ? ORDER BY studentId DESC";
+				query = "SELECT S.studentId, S.name, S.surname, S.email, S.corsoDiLaurea, A.courseId, A.appelloId, A.date, E.examId, E.status, E.grade FROM exams AS E, students AS S, appelli AS A  WHERE E.student = S.studentId AND E.appelloId = A.appelloId AND A.appelloId = ? ORDER BY studentId DESC";
 				break;
 			case "surname":
-				query = "SELECT studentId, name, surname, email, corsoDiLaurea, course, date, status, grade FROM exams, students  WHERE student = studentId AND course = ? AND date = ? ORDER BY surname DESC";
+				query = "SELECT S.studentId, S.name, S.surname, S.email, S.corsoDiLaurea, A.courseId, A.appelloId, A.date, E.examId, E.status, E.grade FROM exams AS E, students AS S, appelli AS A  WHERE E.student = S.studentId AND E.appelloId = A.appelloId AND A.appelloId = ? ORDER BY surname DESC";
 				break;
 			case "name":
-				query = "SELECT studentId, name, surname, email, corsoDiLaurea, course, date, status, grade FROM exams, students  WHERE student = studentId AND course = ? AND date = ? ORDER BY name DESC";
+				query = "SELECT S.studentId, S.name, S.surname, S.email, S.corsoDiLaurea, A.courseId, A.appelloId, A.date, E.examId, E.status, E.grade FROM exams AS E, students AS S, appelli AS A  WHERE E.student = S.studentId AND E.appelloId = A.appelloId AND A.appelloId = ? ORDER BY name DESC";
 				break;
 			case "email":
-				query = "SELECT studentId, name, surname, email, corsoDiLaurea, course, date, status, grade FROM exams, students  WHERE student = studentId AND course = ? AND date = ? ORDER BY email DESC";
+				query = "SELECT S.studentId, S.name, S.surname, S.email, S.corsoDiLaurea, A.courseId, A.appelloId, A.date, E.examId, E.status, E.grade FROM exams AS E, students AS S, appelli AS A  WHERE E.student = S.studentId AND E.appelloId = A.appelloId AND A.appelloId = ? ORDER BY email DESC";
 				break;
 			case "corsoDiLaurea":
-				query = "SELECT studentId, name, surname, email, corsoDiLaurea, course, date, status, grade FROM exams, students  WHERE student = studentId AND course = ? AND date = ? ORDER BY corsoDiLaurea DESC";
+				query = "SELECT S.studentId, S.name, S.surname, S.email, S.corsoDiLaurea, A.courseId, A.appelloId, A.date, E.examId, E.status, E.grade FROM exams AS E, students AS S, appelli AS A  WHERE E.student = S.studentId AND E.appelloId = A.appelloId AND A.appelloId = ? ORDER BY corsoDiLaurea DESC";
 				break;
 			case "grade":
-				query = "SELECT studentId, name, surname, email, corsoDiLaurea, course, date, status, grade FROM exams, students  WHERE student = studentId AND course = ? AND date = ? ORDER BY grade DESC";
+				query = "SELECT S.studentId, S.name, S.surname, S.email, S.corsoDiLaurea, A.courseId, A.appelloId, A.date, E.examId, E.status, E.grade FROM exams AS E, students AS S, appelli AS A  WHERE E.student = S.studentId AND E.appelloId = A.appelloId AND A.appelloId = ? ORDER BY grade DESC";
 				break;
 			case "status":
-				query = "SELECT studentId, name, surname, email, corsoDiLaurea, course, date, status, grade FROM exams, students  WHERE student = studentId AND course = ? AND date = ? ORDER BY status DESC";
+				query = "SELECT S.studentId, S.name, S.surname, S.email, S.corsoDiLaurea, A.courseId, A.appelloId, A.date, E.examId, E.status, E.grade FROM exams AS E, students AS S, appelli AS A  WHERE E.student = S.studentId AND E.appelloId = A.appelloId AND A.appelloId = ? ORDER BY status DESC";
 				break;
 			}
 		}
 		try (PreparedStatement pstatement = con.prepareStatement(query);) {
-			pstatement.setString(1, courseId);
-			pstatement.setString(2, appello);
+			pstatement.setString(1, appelloId.toString());
 			try (ResultSet result = pstatement.executeQuery();) {
 				while (result.next()) {
 					Student student = new Student();
+					Appello appello = new Appello();
 					Exam exam = new Exam();
+					
 					student.setId(result.getInt("studentId"));
 					student.setName(result.getString("name"));
 					student.setSurname(result.getString("surname"));
 					student.setEmail(result.getString("email"));
 					student.setCorsoDiLaurea(result.getString("corsoDiLaurea"));
-					exam.setCourseId(result.getInt("course"));
-					exam.setDate(result.getDate("date"));
+					
+					appello.setAppelloId(result.getInt("appelloId"));
+					appello.setCourseId(result.getInt("courseId"));
+					appello.setDate(result.getDate("date"));
+					
+					exam.setExamId(result.getInt("examId"));
+					exam.setAppello(appello);
 					exam.setStatus(Status.valueOf(result.getString("status")));
-					exam.setGrade(result.getInt("grade"));
+					exam.setGrade(result.getString("grade"));
 					exam.setStudent(student);
+
 					registeredStudents.add(exam);
 				}
 			}

@@ -70,6 +70,7 @@ public class GoToHomeProfessor extends HttpServlet {
 					chosenCourseName = c.getName();
 		} catch (SQLException e) {
 			// throw new ServletException(e);
+			e.printStackTrace();
 			response.sendError(HttpServletResponse.SC_BAD_GATEWAY, "Failure in professor's courses database extraction");
 		}
 		

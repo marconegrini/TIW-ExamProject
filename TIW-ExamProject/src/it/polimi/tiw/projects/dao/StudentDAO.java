@@ -43,7 +43,7 @@ public class StudentDAO {
 	
 	public List<Course> findCourses(String studentId) throws SQLException {
 		List<Course> courses = new ArrayList<Course>();
-		String query = "SELECT C.courseId, C.code, C.name, C.professor FROM courses AS C JOIN exams AS E WHERE C.courseId = E.course AND E.student = ? ORDER BY name DESC";
+		String query = "SELECT C.courseId, C.code, C.name, C.professor FROM courses AS C JOIN exams AS E JOIN appelli AS A WHERE C.courseId = A.courseId AND A.appelloId = E.appelloId AND E.student = ? ORDER BY name ASC";
 		try (PreparedStatement pstatement = con.prepareStatement(query);) {
 			pstatement.setString(1, studentId);
 			try (ResultSet result = pstatement.executeQuery();) {
@@ -61,7 +61,7 @@ public class StudentDAO {
 	}
 	
 	public Integer findDefaultCourse(String studentId) throws SQLException {
-		String query = "SELECT C.courseId, C.code, C.name, C.professor FROM courses AS C JOIN exams AS E WHERE C.courseId = E.course AND E.student = ? ORDER BY name DESC";
+		String query = "SELECT C.courseId, C.code, C.name, C.professor FROM courses AS C JOIN exams AS E JOIN appelli AS A WHERE C.courseId = A.courseId AND A.appelloId = E.appelloId AND E.student = ? ORDER BY name ASC";
 		Integer cid = 0;
 		try (PreparedStatement pstatement = con.prepareStatement(query);) {
 			pstatement.setString(1, studentId);

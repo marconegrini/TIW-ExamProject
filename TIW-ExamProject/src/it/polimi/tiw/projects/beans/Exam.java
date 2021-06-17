@@ -3,11 +3,15 @@ package it.polimi.tiw.projects.beans;
 import java.sql.Date;
 
 public class Exam {
+	private int examId;
 	private Student student;
-	private Integer courseId;
-	private Date date;
+	private Appello appello;
 	private Status status;
-	private Integer grade;
+	private String grade;
+	
+	public int getExamId() {
+		return examId;
+	}
 	
 	public String getName() {
 		return student.getName();
@@ -29,24 +33,23 @@ public class Exam {
 		return student.getCorsoDiLaurea();
 	}
 	
+	public void setExamId(int examId) {
+		this.examId = examId;
+	}
 	
 	public void setStudent(Student student) {
 		this.student = student;
 	}
 	
-	public void setCourseId(Integer courseId) {
-		this.courseId = courseId;
-	}
-	
-	public void setDate(Date date) {
-		this.date = date;
+	public void setAppello(Appello appello) {
+		this.appello = appello;
 	}
 	
 	public void setStatus(Status status) {
 		this.status = status;
 	}
 	
-	public void setGrade(Integer grade) {
+	public void setGrade(String grade) {
 		this.grade = grade;
 	}
 	
@@ -55,18 +58,22 @@ public class Exam {
 	}
 	
 	public Integer getCourseId() {
-		return this.courseId;
+		return this.appello.getCourseId();
 	}
 	
 	public String getDate() {
-		return this.date.toString();
+		return this.appello.getDate().toString();
+	}
+	
+	public int getAppelloId() {
+		return this.appello.getAppelloId();
 	}
 	
 	public String getStatus() {
 		return this.status.toString();
 	}
 	
-	public Integer getGrade() {
+	public String getGrade() {
 		return this.grade;
 	}
 	

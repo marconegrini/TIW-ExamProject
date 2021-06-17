@@ -61,11 +61,13 @@ public class GoToRegisteredStudents extends HttpServlet {
 		
 		Professor professor = (Professor) request.getSession().getAttribute("professor");
 		Integer courseId = null;
+		Integer appelloId = null;
 		String appello = null;
+		Date appelloDate = null;
 		String courseName = null;
 		String sortBy = null;
 		try {
-			courseId = Integer.parseInt(request.getParameter("course"));
+			courseId = Integer.parseInt(request.getParameter("courseId"));
 			if(courseId < 0) throw new IllegalArgumentException();
 		} catch (NullPointerException | IllegalArgumentException e) {
 			// only for debugging e.printStackTrace();
@@ -74,13 +76,23 @@ public class GoToRegisteredStudents extends HttpServlet {
 		}
 		
 		try {
-			appello = request.getParameter("appello");
-			Date appelloDate = Date.valueOf(appello);
+			appello = request.getParameter("appelloDate");
+			appelloDate = Date.valueOf(appello);
 		} catch (IllegalArgumentException | NullPointerException e) {
 			// only for debugging e.printStackTrace();
 			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Incorrect appello date value");
 			return;
 		}
+		
+		try {
+			appelloId = Integer.parseInt(request.getParameter("appelloId"));
+		} catch (IllegalArgumentException | NullPointerException e) {
+			// only for debugging e.printStackTrace();
+			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Incorrect appello date value");
+			return;
+		}
+		
+		
 		
 		try {
 			courseName = request.getParameter("courseName");
@@ -115,7 +127,11 @@ public class GoToRegisteredStudents extends HttpServlet {
 		CourseDAO courseDao = new CourseDAO(connection);
 		List<Exam> registeredStudents = null;
 		try {
-			registeredStudents = courseDao.findRegisteredStudents(courseId.toString(), appello, sortBy, order.toString());	
+			registeredStudents = courseDao.findRegisteredStudents(appelloId, sortBy, order.toString());	
+			if(registeredStudents == null) {
+				response.sendError(HttpServletResponse.SC_NOT_FOUND, "Resource not found");
+				return;
+			}
 		} catch (SQLException sqle) {
 			//sqle.printStackTrace();
 			response.sendError(HttpServletResponse.SC_BAD_GATEWAY, "Failure in registered students database extraction");
@@ -127,9 +143,10 @@ public class GoToRegisteredStudents extends HttpServlet {
 		final WebContext ctx = new WebContext(request, response, servletContext, request.getLocale());
 		ctx.clearVariables();
 		ctx.setVariable("registeredStudents", registeredStudents);
-		ctx.setVariable("appello", appello);
+		ctx.setVariable("appelloDate", appelloDate);
 		ctx.setVariable("courseName", courseName);
-		ctx.setVariable("course", courseId);
+		ctx.setVariable("courseId", courseId);
+		ctx.setVariable("appelloId", appelloId);
 		this.templateEngine.process(path, ctx, response.getWriter());
 	}
 
