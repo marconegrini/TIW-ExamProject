@@ -1,7 +1,5 @@
 package it.polimi.tiw.projects.beans;
 
-import java.sql.Date;
-
 public class Exam {
 	private int examId;
 	private Student student;

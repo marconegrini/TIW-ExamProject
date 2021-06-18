@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import it.polimi.tiw.projects.beans.Course;
+import it.polimi.tiw.projects.beans.Professor;
 import it.polimi.tiw.projects.beans.Student;
 
 public class StudentDAO {
@@ -49,10 +50,16 @@ public class StudentDAO {
 			try (ResultSet result = pstatement.executeQuery();) {
 				while (result.next()) {
 					Course course = new Course();
+
+					Professor professor = new Professor();
+					professor.setId(result.getInt("professor"));
+					professor.setName("profname");
+					professor.setSurname("surname");
+					
 					course.setCourseId(result.getInt("courseId"));
 					course.setCode(result.getString("code"));
 					course.setName(result.getString("name"));
-					course.setProfessorId(result.getInt("professor"));
+					course.setProfessor(professor);
 					courses.add(course);
 				}
 			}

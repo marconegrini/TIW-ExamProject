@@ -65,11 +65,10 @@ public class GoToExamResult extends HttpServlet {
 			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Incorrect param values");
 			return;
 		}
-		String temp = null;
+		
 		Date appelloDate = null;
 		try {
-			temp = request.getParameter("appello");
-			appelloDate = Date.valueOf(temp);
+			appelloDate = Date.valueOf(request.getParameter("appello"));
 		} catch (IllegalArgumentException | NullPointerException e) {
 			// only for debugging e.printStackTrace();
 			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Incorrect param values");
@@ -84,7 +83,7 @@ public class GoToExamResult extends HttpServlet {
 			CourseDAO courseDao = new CourseDAO(connection);
 			Appello appello = courseDao.findAppello(courseId, appelloDate);
 			if (appello == null) {
-				response.sendError(HttpServletResponse.SC_NOT_FOUND, "Exam not found");
+				response.sendError(HttpServletResponse.SC_NOT_FOUND, "Appello not found");
 				return;
 			}
 			
@@ -98,6 +97,12 @@ public class GoToExamResult extends HttpServlet {
 			if(exam == null) {
 				response.sendError(HttpServletResponse.SC_NOT_FOUND, "Exam not found");
 				return;
+			}
+			
+			course = courseDao.findCourseById(courseId);
+			if (course == null) {
+				response.sendError(HttpServletResponse.SC_NOT_FOUND, "Course not found");
+				return;
 			} 
 		} catch (SQLException sqle) {
 				response.sendError(HttpServletResponse.SC_BAD_GATEWAY, "Failure in exam database extraction");
@@ -106,13 +111,17 @@ public class GoToExamResult extends HttpServlet {
 		System.out.println("student: " + student);
 		System.out.println("selected course id: " + courseId);
 		System.out.println("selected appello date: " + appelloDate);
-		
-		// TODO: get grade!
+
+		String[] grades = {"18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "30 E LODE"};
 		
 		String path = "/WEB-INF/ExamResult.html";
 		ServletContext servletContext = getServletContext();
 		final WebContext ctx = new WebContext(request, response, servletContext, request.getLocale());
-		ctx.setVariable("exam", exam);
+		
+		ctx.setVariable("examInfo", exam);
+		ctx.setVariable("courseInfo", course);
+		ctx.setVariable("refusableGrades", grades);
+		
 		this.templateEngine.process(path, ctx, response.getWriter());
 	}
 

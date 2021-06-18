@@ -103,4 +103,12 @@ public class ExamDAO {
 			pstatement.executeUpdate();
 		}
 	}
+	
+	public void rifiuta(Integer examId) throws SQLException {
+		String query = "UPDATE exams SET status = 'RIFIUTATO' WHERE examId = ? AND status = 'PUBBLICATO'";
+		try (PreparedStatement pstatement = con.prepareStatement(query);){
+			pstatement.setInt(1, examId);
+			pstatement.executeUpdate();
+		}
+	}
 }

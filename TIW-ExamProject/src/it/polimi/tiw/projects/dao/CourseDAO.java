@@ -15,6 +15,7 @@ import it.polimi.tiw.projects.beans.Status;
 import it.polimi.tiw.projects.beans.Appello;
 import it.polimi.tiw.projects.beans.Course;
 import it.polimi.tiw.projects.beans.Exam;
+import it.polimi.tiw.projects.beans.Professor;
 import it.polimi.tiw.projects.beans.Student;
 
 public class CourseDAO {
@@ -25,9 +26,32 @@ public class CourseDAO {
 		this.con = connection;
 	}
 	
-	public Course findCourseById(Integer id) {
+	public Course findCourseById(Integer id) throws SQLException {
 		Course course = null;
-		// TODO and modify Course class to store information about professor
+		String query = "SELECT C.courseId, C.code, C.name, C.professor, P.name AS profname, P.surname" + " "
+				+ "FROM courses AS C, professors AS P" + " "
+				+ "WHERE C.professor = P.professorId AND C.courseId = ?";
+		try (PreparedStatement pstatement = con.prepareStatement(query);) {
+			pstatement.setInt(1, id);
+			try (ResultSet result = pstatement.executeQuery();) {
+				if (!result.isBeforeFirst()) return null;
+				result.next();
+				
+				Professor professor = new Professor();
+				professor.setId(result.getInt("professor"));
+				professor.setName("profname");
+				professor.setSurname("surname");
+				
+				course = new Course();
+				course.setCourseId(result.getInt("courseId"));
+				course.setCode(result.getString("code"));
+				course.setName(result.getString("name"));
+				course.setProfessor(professor);
+
+				result.last();
+				if (result.getRow() > 1) return null; // more than one record found, invalid query
+			}
+		}
 		return course;
 		
 	}
@@ -45,15 +69,13 @@ public class CourseDAO {
 		String query = "SELECT appelloId, courseId, date FROM appelli WHERE courseId = ? AND date = ?";
 		try (PreparedStatement pstatement = con.prepareStatement(query)) {
 			pstatement.setInt(1, courseId);
-			pstatement.setDate(2, date);
+			pstatement.setString(2, date.toString());
 			try (ResultSet result = pstatement.executeQuery()) {
 				if (!result.isBeforeFirst()) return null;
 				result.next();
 				appello.setAppelloId(result.getInt("appelloId"));
 				appello.setCourseId(result.getInt("courseId"));
 				appello.setDate(result.getDate("date"));
-				result.last();
-				if (result.getRow() > 1) return null; // more than one record found, invalid query
 			}
 		}
 		return appello;

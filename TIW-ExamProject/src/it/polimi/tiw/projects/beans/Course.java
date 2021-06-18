@@ -5,8 +5,19 @@ public class Course {
 	private int courseId;
 	private String code;
 	private String name;
-	private int professorId;
+	private Professor professor;
 	
+	public int getProfId() {
+		return professor.getId();
+	}
+	
+	public String getProfName() {
+		return professor.getName();
+	}
+	
+	public String getProfSurname() {
+		return professor.getSurname();
+	}
 
 	public int getCourseId() {
 		return courseId;
@@ -20,8 +31,8 @@ public class Course {
 		return name;
 	}
 
-	public int getProfessorId() {
-		return professorId;
+	public Professor getProfessor() {
+		return professor;
 	}
 
 	public void setCourseId(Integer i) {
@@ -36,8 +47,8 @@ public class Course {
 		name = n;
 	}
 	
-	public void setProfessorId(Integer n) {
-		professorId = n;
+	public void setProfessor(Professor p) {
+		professor = p;
 	}
 
 }

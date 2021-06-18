@@ -6,9 +6,92 @@
 <link rel="stylesheet" type="text/css" media="all" href="../CSS/mystyle.css" th:href="@{/css/mystyle.css}" />
 </head>
 <body>
-<div align="right">
+
+	<div align="right">
 		<a th:href="@{/Logout}">Logout</a>
 	</div>
+	
 exam result
+
+	<div th:switch=${examInfo.status}>
+	
+		<div th:case="'NONINSERITO'">
+			<p>Voto non ancora definito</p>
+		</div>
+		
+		<div th:case="'INSERITO'">
+			<p>Voto non ancora definito</p>
+		</div>
+		
+		<div th:case="'PUBBLICATO'">
+			<p>Student</p>
+			Id: <span th:text="${examInfo.studentId}"></span><br>
+			Name: <span th:text="${examInfo.name}"></span><br>
+			Surname: <span th:text="${examInfo.surname}"></span><br>
+			Email: <span th:text="${examInfo.email}"></span><br>
+			Bachelor course: <span th:text="${examInfo.corsoDiLaurea}"></span><br>
+			<br>
+			<p>Course</p>
+			Code: <span th:text="${courseInfo.code}"></span><br>
+			Name: <span th:text="${courseInfo.name}"></span><br>
+			Professor: <span th:text="${courseInfo.profName}"></span> <span th:text="${courseInfo.profSurname}"></span><br>
+			<br>
+			<p>Session</p>
+			Date: <span th:text="${examInfo.date}"></span><br>
+			<br>
+			Grade: <span th:text="${examInfo.grade}"></span><br>
+			<br>
+			<!-- controllo che il voto sia nel range! -->
+			<div th:if="${#lists.contains(refusableGrades, ${examInfo.grade})">
+				<form th:action="@{/Rifiuta}" method="POST">
+					<input type="hidden" name="examId" th:value="${exam.examId}">
+					<input type="submit" name="submit" value="Refuse Grade">
+				</form>
+			</div>
+		</div>
+		
+		<div th:case="'RIFIUTATO'">
+			<p>Student</p>
+			Id: <span th:text="${examInfo.studentId}"></span><br>
+			Name: <span th:text="${examInfo.name}"></span><br>
+			Surname: <span th:text="${examInfo.surname}"></span><br>
+			Email: <span th:text="${examInfo.email}"></span><br>
+			Bachelor course: <span th:text="${examInfo.corsoDiLaurea}"></span><br>
+			<br>
+			<p>Course</p>
+			Code: <span th:text="${courseInfo.code}"></span><br>
+			Name: <span th:text="${courseInfo.name}"></span><br>
+			Professor: <span th:text="${courseInfo.profName}"></span> <span th:text="${courseInfo.profSurname}"></span><br>
+			<br>
+			<p>Session</p>
+			Date: <span th:text="${examInfo.date}"></span><br>
+			<br>
+			Grade: <span th:text="${examInfo.grade}"></span><br>
+			Info: <span>Il voto è stato rifiutato.</span><br>
+			<br>
+		</div>
+		
+		<div th:case="'VERBALIZZATO'">
+			<p>Student</p>
+			Id: <span th:text="${examInfo.studentId}"></span><br>
+			Name: <span th:text="${examInfo.name}"></span><br>
+			Surname: <span th:text="${examInfo.surname}"></span><br>
+			Email: <span th:text="${examInfo.email}"></span><br>
+			Bachelor course: <span th:text="${examInfo.corsoDiLaurea}"></span><br>
+			<br>
+			<p>Course</p>
+			Code: <span th:text="${courseInfo.code}"></span><br>
+			Name: <span th:text="${courseInfo.name}"></span><br>
+			Professor: <span th:text="${courseInfo.profName}"></span> <span th:text="${courseInfo.profSurname}"></span><br>
+			<br>
+			<p>Session</p>
+			Date: <span th:text="${examInfo.date}"></span><br>
+			<br>
+			Grade: <span th:text="${examInfo.grade}"></span><br>
+			Info: <span>Il voto è stato verbalizzato.</span><br>
+			<br>
+		</div>
+		
+	</div>
 </body>
 </html>
