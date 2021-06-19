@@ -23,7 +23,7 @@ exam result
 			<p>Voto non ancora definito</p>
 		</div>
 		
-		<div th:case="'PUBBLICATO'">
+		<div th:case="*">
 			<p>Student</p>
 			Id: <span th:text="${examInfo.studentId}"></span><br>
 			Name: <span th:text="${examInfo.name}"></span><br>
@@ -40,16 +40,17 @@ exam result
 			Date: <span th:text="${examInfo.date}"></span><br>
 			<br>
 			Grade: <span th:text="${examInfo.grade}"></span><br>
+			Stsatus: <span th:text="${examInfo.status}"></span><br>
 			<br>
-			<!-- controllo che il voto sia nel range! -->
-			<div th:if="${#lists.contains(refusableGrades, ${examInfo.grade})">
+			
+			<div th:if="${refusable}">
 				<form th:action="@{/Rifiuta}" method="POST">
-					<input type="hidden" name="examId" th:value="${exam.examId}">
-					<input type="submit" name="submit" value="Refuse Grade">
+					<input type="hidden" name="examId" th:value="${examInfo.examId}"/>
+					<input type="submit" name="submit" value="Refuse grade"/>
 				</form>
 			</div>
 		</div>
-		
+		<!--
 		<div th:case="'RIFIUTATO'">
 			<p>Student</p>
 			Id: <span th:text="${examInfo.studentId}"></span><br>
@@ -91,7 +92,7 @@ exam result
 			Info: <span>Il voto è stato verbalizzato.</span><br>
 			<br>
 		</div>
-		
+		-->
 	</div>
 </body>
 </html>

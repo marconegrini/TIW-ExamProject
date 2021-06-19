@@ -79,6 +79,13 @@ public class ExamDAO {
 		return id;
 	}
 	
+	public boolean isRefusable(String grade, String status) {
+		return status.toUpperCase().equals("PUBBLICATO") && !(
+				grade.toUpperCase().equals("ASSENTE") ||
+				grade.toUpperCase().equals("RIMANDATO") ||
+				grade.toUpperCase().equals("RIPROVATO"));
+	}
+	
 	public void insertGrade(String grade, Integer examId) throws SQLException{
 		String query = "UPDATE exams SET grade = ?, status = 'INSERITO' WHERE examId = ?";
 		try (PreparedStatement pstatement = con.prepareStatement(query);){

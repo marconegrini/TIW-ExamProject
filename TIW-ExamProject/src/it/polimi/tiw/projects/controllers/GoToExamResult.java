@@ -77,6 +77,7 @@ public class GoToExamResult extends HttpServlet {
 		
 		Exam exam = null;
 		Course course = null;
+		boolean refusable = false;
 		
 		try {
 			ExamDAO examDao = new ExamDAO(connection);
@@ -98,6 +99,7 @@ public class GoToExamResult extends HttpServlet {
 				response.sendError(HttpServletResponse.SC_NOT_FOUND, "Exam not found");
 				return;
 			}
+			refusable = examDao.isRefusable(exam.getGrade(), exam.getStatus());
 			
 			course = courseDao.findCourseById(courseId);
 			if (course == null) {
@@ -111,16 +113,15 @@ public class GoToExamResult extends HttpServlet {
 		System.out.println("student: " + student);
 		System.out.println("selected course id: " + courseId);
 		System.out.println("selected appello date: " + appelloDate);
-
-		String[] grades = {"18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "30 E LODE"};
 		
 		String path = "/WEB-INF/ExamResult.html";
 		ServletContext servletContext = getServletContext();
 		final WebContext ctx = new WebContext(request, response, servletContext, request.getLocale());
 		
+		ctx.clearVariables();
 		ctx.setVariable("examInfo", exam);
 		ctx.setVariable("courseInfo", course);
-		ctx.setVariable("refusableGrades", grades);
+		ctx.setVariable("refusable", refusable);
 		
 		this.templateEngine.process(path, ctx, response.getWriter());
 	}
