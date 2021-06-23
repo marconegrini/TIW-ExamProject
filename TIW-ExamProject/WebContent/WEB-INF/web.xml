@@ -38,7 +38,7 @@
 	<url-pattern>/Pubblica</url-pattern> 
 	<url-pattern>/UpdateGrade</url-pattern> 
 	<url-pattern>/Verbalizza</url-pattern> 
-
+	<url-pattern>/Rifiuta</url-pattern>
  </filter-mapping>
 <filter-mapping> 
     <filter-name>ProfessorChecker</filter-name> 
@@ -53,7 +53,7 @@
     <filter-name>StudentChecker</filter-name> 
     <url-pattern>/GoToHomeStudent</url-pattern> 
     <url-pattern>/GoToExamResult</url-pattern> 
-
+	<url-pattern>/Rifiuta</url-pattern>
  </filter-mapping>
   <welcome-file-list>
     <welcome-file>index.html</welcome-file>
