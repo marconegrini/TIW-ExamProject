@@ -104,6 +104,11 @@ public class ExamDAO {
 	}
 	
 	public void verbalizza(Integer appelloId) throws SQLException {
+		String updateRefused = "UPDATE exams SET grade = 'RIMANDATO' WHERE appelloId = ? AND status = 'RIFIUTATO'";
+		try (PreparedStatement pstatement = con.prepareStatement(updateRefused);){
+			pstatement.setInt(1, appelloId);
+			pstatement.executeUpdate();
+		}
 		String query = "UPDATE exams SET status = 'VERBALIZZATO' WHERE appelloId = ? AND (status = 'PUBBLICATO' OR STATUS = 'RIFIUTATO')";
 		try (PreparedStatement pstatement = con.prepareStatement(query);){
 			pstatement.setInt(1, appelloId);

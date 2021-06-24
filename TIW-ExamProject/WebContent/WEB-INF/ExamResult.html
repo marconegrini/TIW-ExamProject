@@ -46,6 +46,8 @@ exam result
 			<div th:if="${refusable}">
 				<form th:action="@{/Rifiuta}" method="POST">
 					<input type="hidden" name="examId" th:value="${examInfo.examId}"/>
+					<input type="hidden" name="appelloDate" th:value="${examInfo.date}"/>
+					<input type="hidden" name="courseId" th:value="${courseInfo.courseId}"/>
 					<input type="submit" name="submit" value="Refuse grade"/>
 				</form>
 			</div>

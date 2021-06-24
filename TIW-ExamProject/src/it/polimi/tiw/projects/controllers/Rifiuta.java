@@ -40,6 +40,7 @@ public class Rifiuta extends HttpServlet {
 	 * @see Servlet#init(ServletConfig)
 	 */
 	public void init(ServletConfig config) throws ServletException {
+		super.init(config);
 		connection = ConnectionHandler.getConnection(getServletContext());
 		ServletContext servletContext = getServletContext();
 		ServletContextTemplateResolver templateResolver = new ServletContextTemplateResolver(servletContext);
@@ -72,14 +73,14 @@ public class Rifiuta extends HttpServlet {
 		Integer courseId = null;
 		try {
 			examId = Integer.parseInt(request.getParameter("examId"));
-			appelloDate = Date.valueOf(request.getParameter("appello"));
+			appelloDate = Date.valueOf(request.getParameter("appelloDate"));
 			courseId = Integer.parseInt(request.getParameter("courseId"));
 		} catch (IllegalArgumentException | NullPointerException e) {
 			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid parameter value");
 			return;
 		}
 		try {
-			examDao.pubblica(examId);
+			examDao.rifiuta(examId);
 		} catch(SQLException sqle) {
 			response.sendError(HttpServletResponse.SC_BAD_GATEWAY, "Database failure while updating grade");
 			return;
