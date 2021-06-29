@@ -88,7 +88,7 @@ public class GoToExamResult extends HttpServlet {
 				return;
 			}
 			
-			Integer examId = examDao.getExamIdByStudentAndSession(student.getId(), appello.getAppelloId());
+			Integer examId = examDao.getExamIdByStudentAndSession(student.getId(), appello.getId());
 			if(examId == null) {
 				response.sendError(HttpServletResponse.SC_NOT_FOUND, "Exam not found");
 				return;

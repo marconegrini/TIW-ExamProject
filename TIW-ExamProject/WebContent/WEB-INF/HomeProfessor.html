@@ -25,9 +25,9 @@
 						</tr>
 					</thead>
 					<tbody>
-						<tr th:each="p : ${courses}" th:class="(${p.courseId} == ${chosenCourseId})? 'current'">
+						<tr th:each="p : ${courses}" th:class="(${p.id} == ${chosenCourseId})? 'current'">
 							<td th:text="${p.code}"></td>
-							<td><a href="HomeProfessor.html" th:href="@{/GoToHomeProfessor(courseId=${p.courseId})}"><span
+							<td><a href="HomeProfessor.html" th:href="@{/GoToHomeProfessor(courseId=${p.id})}"><span
 									th:text="${p.name}"></span></a></td>
 						</tr>
 					</tbody>
@@ -46,7 +46,7 @@
 								<tbody>
 									<tr th:each="a : ${appelli}">
 										<td th:text="${a.date}"></td>
-										<td><a th:href="@{/GoToRegisteredStudents(appelloDate=${a.date}, appelloId=${a.appelloId}, courseName=${chosenCourseName})}">Details</a></td>
+										<td><a th:href="@{/GoToRegisteredStudents(appelloDate=${a.date}, appelloId=${a.id}, courseName=${chosenCourseName})}">Details</a></td>
 									</tr>
 								</tbody>
 							</table>

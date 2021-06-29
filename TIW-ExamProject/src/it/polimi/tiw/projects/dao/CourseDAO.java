@@ -8,8 +8,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.mysql.cj.x.protobuf.MysqlxCrud.Order;
-
 import it.polimi.tiw.projects.beans.Status;
 
 import it.polimi.tiw.projects.beans.Appello;
@@ -17,6 +15,7 @@ import it.polimi.tiw.projects.beans.Course;
 import it.polimi.tiw.projects.beans.Exam;
 import it.polimi.tiw.projects.beans.Professor;
 import it.polimi.tiw.projects.beans.Student;
+import it.polimi.tiw.projects.beans.Order;
 
 public class CourseDAO {
 	
@@ -27,25 +26,32 @@ public class CourseDAO {
 	}
 	
 	public Course findCourseById(Integer id) throws SQLException {
-		Course course = null;
-		String query = "SELECT C.courseId, C.code, C.name, C.professor, P.name AS profname, P.surname" + " "
-				+ "FROM courses AS C, professors AS P" + " "
-				+ "WHERE C.professor = P.professorId AND C.courseId = ?";
+		Course course = new Course();
+		String query = """
+				SELECT
+					C.courseId, C.code, C.name AS c_name,
+					P.professorId, P.name AS p_name, P.surname
+				FROM
+					courses AS C, professors AS P
+				WHERE
+					C.professor = P.professorId AND C.courseId = ?
+				""";
 		try (PreparedStatement pstatement = con.prepareStatement(query);) {
 			pstatement.setInt(1, id);
 			try (ResultSet result = pstatement.executeQuery();) {
 				if (!result.isBeforeFirst()) return null;
 				result.next();
-				
 				Professor professor = new Professor();
-				professor.setId(result.getInt("professor"));
-				professor.setName("profname");
+				
+				// Setting professor's info
+				professor.setId(result.getInt("professorId"));
+				professor.setName("p_name");
 				professor.setSurname("surname");
 				
-				course = new Course();
-				course.setCourseId(result.getInt("courseId"));
+				// Setting course's info
+				course.setId(result.getInt("courseId"));
 				course.setCode(result.getString("code"));
-				course.setName(result.getString("name"));
+				course.setName(result.getString("c_name"));
 				course.setProfessor(professor);
 
 				result.last();
@@ -66,33 +72,94 @@ public class CourseDAO {
 	 */
 	public Appello findAppello(Integer courseId, Date date) throws SQLException {
 		Appello appello = new Appello();
-		String query = "SELECT appelloId, courseId, date FROM appelli WHERE courseId = ? AND date = ?";
+		String query = """
+				SELECT
+					A.appelloId, A.date,
+					C.courseId, C.code, C.name AS c_name,
+					P.professorId, P.name AS p_name, P.surname
+				FROM
+					appelli AS A, courses AS C, professors AS P
+				WHERE
+					P.professorId = C.professor AND
+					C.courseId = A.courseId AND
+					C.courseId = ? AND
+					A.date = ?
+				""";
 		try (PreparedStatement pstatement = con.prepareStatement(query)) {
 			pstatement.setInt(1, courseId);
 			pstatement.setString(2, date.toString());
 			try (ResultSet result = pstatement.executeQuery()) {
 				if (!result.isBeforeFirst()) return null;
 				result.next();
-				appello.setAppelloId(result.getInt("appelloId"));
-				appello.setCourseId(result.getInt("courseId"));
+				
+				Professor professor = new Professor();
+				Course course = new Course();
+				
+				// Setting professor's info
+				professor.setId(result.getInt("professorId"));
+				professor.setName(result.getString("p_name"));
+				professor.setSurname(result.getString("surname"));
+				
+				// Setting course's info
+				course.setId(result.getInt("courseId"));
+				course.setCode(result.getString("code"));
+				course.setName(result.getString("c_name"));
+				course.setProfessor(professor);
+				
+				// Setting appello's info
+				appello.setId(result.getInt("appelloId"));
 				appello.setDate(result.getDate("date"));
+				appello.setCourse(course);
+				
+				result.last();
+				if (result.getRow() > 1) return null; // more than one record found, invalid query
 			}
 		}
 		return appello;
 	}
 
 	//finds appelli related to the specified course
-	public List<Appello> findAppelli(String courseId) throws SQLException {
+	public List<Appello> findAppelli(Integer i) throws SQLException {
 		List<Appello> appelli = new ArrayList<Appello>();
-		String query = "SELECT appelloId, courseId, date FROM appelli WHERE courseId = ? ORDER BY date DESC";
+		String query = """
+				SELECT
+					A.appelloId, A.date,
+					C.courseId, C.code, C.name AS c_name,
+					P.professorId, P.name AS p_name, P.surname
+				FROM
+					appelli AS A, courses AS C, professors AS P
+				WHERE
+					P.professorId = C.professor AND
+					C.courseId = A.courseId AND
+					C.courseId = ?
+				ORDER BY
+					A.date DESC
+				""";
 		try (PreparedStatement pstatement = con.prepareStatement(query);) {
-			pstatement.setString(1, courseId);
+			pstatement.setInt(1, i);
 			try (ResultSet result = pstatement.executeQuery();) {
 				while (result.next()) {
+					Professor professor = new Professor();
+					Course course = new Course();
 					Appello appello = new Appello();
-					appello.setCourseId(result.getInt("courseId"));
+					
+					// Setting professor's info
+					professor.setId(result.getInt("professorId"));
+					professor.setName(result.getString("p_name"));
+					professor.setSurname(result.getString("surname"));
+					
+					// Setting course's info
+					course.setId(result.getInt("courseId"));
+					course.setCode(result.getString("code"));
+					course.setName(result.getString("c_name"));
+					course.setProfessor(professor);
+					
+					// Setting appello's info
+					appello.setId(result.getInt("appelloId"));
 					appello.setDate(result.getDate("date"));
-					appello.setAppelloId(result.getInt("appelloId"));
+					appello.setCourse(course);
+					
+					// Adding the appello to the list
 					appelli.add(appello);
 				}
 			}
@@ -102,80 +169,81 @@ public class CourseDAO {
 	
 	public List<Exam> findRegisteredStudents(Integer appelloId, String sortBy, String order) throws SQLException{
 		List<Exam> registeredStudents = new ArrayList<Exam>();
-		String query = null;
-		if(order.equals("ASC")) {
-			switch(sortBy) {
-			case "studentId":
-				query = "SELECT S.studentId, S.name, S.surname, S.email, S.corsoDiLaurea, A.courseId, A.appelloId, A.date, E.examId, E.status, E.grade FROM exams AS E, students AS S, appelli AS A  WHERE E.student = S.studentId AND E.appelloId = A.appelloId AND A.appelloId = ? ORDER BY studentId ASC";
-				break;
-			case "surname":
-				query = "SELECT S.studentId, S.name, S.surname, S.email, S.corsoDiLaurea, A.courseId, A.appelloId, A.date, E.examId, E.status, E.grade FROM exams AS E, students AS S, appelli AS A  WHERE E.student = S.studentId AND E.appelloId = A.appelloId AND A.appelloId = ? ORDER BY surname ASC";
-				break;
-			case "name":
-				query = "SELECT S.studentId, S.name, S.surname, S.email, S.corsoDiLaurea, A.courseId, A.appelloId, A.date, E.examId, E.status, E.grade FROM exams AS E, students AS S, appelli AS A  WHERE E.student = S.studentId AND E.appelloId = A.appelloId AND A.appelloId = ? ORDER BY name ASC";
-				break;
-			case "email":
-				query = "SELECT S.studentId, S.name, S.surname, S.email, S.corsoDiLaurea, A.courseId, A.appelloId, A.date, E.examId, E.status, E.grade FROM exams AS E, students AS S, appelli AS A  WHERE E.student = S.studentId AND E.appelloId = A.appelloId AND A.appelloId = ? ORDER BY email ASC";
-				break;
-			case "corsoDiLaurea":
-				query = "SELECT S.studentId, S.name, S.surname, S.email, S.corsoDiLaurea, A.courseId, A.appelloId, A.date, E.examId, E.status, E.grade FROM exams AS E, students AS S, appelli AS A  WHERE E.student = S.studentId AND E.appelloId = A.appelloId AND A.appelloId = ? ORDER BY corsoDiLaurea ASC";
-				break;
-			case "grade":
-				query = "SELECT S.studentId, S.name, S.surname, S.email, S.corsoDiLaurea, A.courseId, A.appelloId, A.date, E.examId, E.status, E.grade FROM exams AS E, students AS S, appelli AS A  WHERE E.student = S.studentId AND E.appelloId = A.appelloId AND A.appelloId = ? ORDER BY grade ASC";
-				break;
-			case "status":
-				query = "SELECT S.studentId, S.name, S.surname, S.email, S.corsoDiLaurea, A.courseId, A.appelloId, A.date, E.examId, E.status, E.grade FROM exams AS E, students AS S, appelli AS A  WHERE E.student = S.studentId AND E.appelloId = A.appelloId AND A.appelloId = ? ORDER BY status ASC";
-				break;
-			}
-		} else {
-			switch(sortBy) {
-			case "studentId":
-				query = "SELECT S.studentId, S.name, S.surname, S.email, S.corsoDiLaurea, A.courseId, A.appelloId, A.date, E.examId, E.status, E.grade FROM exams AS E, students AS S, appelli AS A  WHERE E.student = S.studentId AND E.appelloId = A.appelloId AND A.appelloId = ? ORDER BY studentId DESC";
-				break;
-			case "surname":
-				query = "SELECT S.studentId, S.name, S.surname, S.email, S.corsoDiLaurea, A.courseId, A.appelloId, A.date, E.examId, E.status, E.grade FROM exams AS E, students AS S, appelli AS A  WHERE E.student = S.studentId AND E.appelloId = A.appelloId AND A.appelloId = ? ORDER BY surname DESC";
-				break;
-			case "name":
-				query = "SELECT S.studentId, S.name, S.surname, S.email, S.corsoDiLaurea, A.courseId, A.appelloId, A.date, E.examId, E.status, E.grade FROM exams AS E, students AS S, appelli AS A  WHERE E.student = S.studentId AND E.appelloId = A.appelloId AND A.appelloId = ? ORDER BY name DESC";
-				break;
-			case "email":
-				query = "SELECT S.studentId, S.name, S.surname, S.email, S.corsoDiLaurea, A.courseId, A.appelloId, A.date, E.examId, E.status, E.grade FROM exams AS E, students AS S, appelli AS A  WHERE E.student = S.studentId AND E.appelloId = A.appelloId AND A.appelloId = ? ORDER BY email DESC";
-				break;
-			case "corsoDiLaurea":
-				query = "SELECT S.studentId, S.name, S.surname, S.email, S.corsoDiLaurea, A.courseId, A.appelloId, A.date, E.examId, E.status, E.grade FROM exams AS E, students AS S, appelli AS A  WHERE E.student = S.studentId AND E.appelloId = A.appelloId AND A.appelloId = ? ORDER BY corsoDiLaurea DESC";
-				break;
-			case "grade":
-				query = "SELECT S.studentId, S.name, S.surname, S.email, S.corsoDiLaurea, A.courseId, A.appelloId, A.date, E.examId, E.status, E.grade FROM exams AS E, students AS S, appelli AS A  WHERE E.student = S.studentId AND E.appelloId = A.appelloId AND A.appelloId = ? ORDER BY grade DESC";
-				break;
-			case "status":
-				query = "SELECT S.studentId, S.name, S.surname, S.email, S.corsoDiLaurea, A.courseId, A.appelloId, A.date, E.examId, E.status, E.grade FROM exams AS E, students AS S, appelli AS A  WHERE E.student = S.studentId AND E.appelloId = A.appelloId AND A.appelloId = ? ORDER BY status DESC";
-				break;
-			}
-		}
+		String query = """
+				SELECT
+					E.examId, E.status, E.grade,
+					A.appelloId, A.date,
+					C.courseId, C.code, C.name AS c_name,
+					P.professorId, P.name AS p_name, P.surname AS p_surname,
+					S.studentId, S.name AS s_name, S.surname AS s_surname, S.email, S.corsoDiLaurea
+				FROM
+					exams AS E,
+					students AS S,
+					appelli AS A,
+					courses AS C,
+					professors AS P
+				WHERE
+					P.professorId = C.Professor AND
+					C.courseId = A.courseId AND
+					A.appelloId = E.appelloId AND
+					S.studentId = E.student AND
+					A.appelloId = ?
+				""";
+		try {
+			Order orderType = Order.fromString(order);
+			query += switch(sortBy) {
+				case "studentId" -> " ORDER BY S.studentId " + orderType.name();
+				case "surname" -> " ORDER BY S.surname " + orderType.name();
+				case "name" -> " ORDER BY S.name " + orderType.name();
+				case "email" -> " ORDER BY S.email " + orderType.name();
+				case "corsoDiLaurea" -> " ORDER BY S.corsoDiLaurea " + orderType.name();
+				case "grade" -> " ORDER BY E.grade " + orderType.name();
+				case "status" -> " ORDER BY E.status " + orderType.name();
+				default -> "";
+			};
+		} catch (IllegalArgumentException ignored) {}
+			
 		try (PreparedStatement pstatement = con.prepareStatement(query);) {
 			pstatement.setString(1, appelloId.toString());
 			try (ResultSet result = pstatement.executeQuery();) {
 				while (result.next()) {
+					Professor professor = new Professor();
+					Course course = new Course();
 					Student student = new Student();
 					Appello appello = new Appello();
 					Exam exam = new Exam();
 					
+					// Setting student's info
 					student.setId(result.getInt("studentId"));
-					student.setName(result.getString("name"));
-					student.setSurname(result.getString("surname"));
+					student.setName(result.getString("s_name"));
+					student.setSurname(result.getString("s_surname"));
 					student.setEmail(result.getString("email"));
-					student.setCorsoDiLaurea(result.getString("corsoDiLaurea"));
+					student.setBachelorCourse(result.getString("corsoDiLaurea"));
 					
-					appello.setAppelloId(result.getInt("appelloId"));
-					appello.setCourseId(result.getInt("courseId"));
+					// Setting professor's info
+					professor.setId(result.getInt("professorId"));
+					professor.setName(result.getString("p_name"));
+					professor.setSurname(result.getString("p_surname"));
+					
+					// Setting course's info
+					course.setId(result.getInt("courseId"));
+					course.setCode(result.getString("code"));
+					course.setName(result.getString("c_name"));
+					course.setProfessor(professor);
+					
+					// Setting appello's info
+					appello.setId(result.getInt("appelloId"));
 					appello.setDate(result.getDate("date"));
+					appello.setCourse(course);
 					
-					exam.setExamId(result.getInt("examId"));
+					// Setting exam's info
+					exam.setId(result.getInt("examId"));
 					exam.setAppello(appello);
 					exam.setStatus(Status.valueOf(result.getString("status")));
 					exam.setGrade(result.getString("grade"));
 					exam.setStudent(student);
 
+					// Adding exam
 					registeredStudents.add(exam);
 				}
 			}
@@ -183,9 +251,10 @@ public class CourseDAO {
 		
 		System.out.println(sortBy + " " + order + " order performed");
 		for(Exam e : registeredStudents) {
-			System.out.println(e.getName());
-			System.out.println(e.getSurname());
-			System.out.println(e.getCorsoDiLaurea());
+			Student s = e.getStudent();
+			System.out.println(s.getName());
+			System.out.println(s.getSurname());
+			System.out.println(s.getBachelorCourse());
 		}
 		return registeredStudents;
 	}

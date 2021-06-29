@@ -2,12 +2,12 @@ package it.polimi.tiw.projects.beans;
 
 public class Professor {
 	
-	private int professorId;
+	private int id;
 	private String name;
 	private String surname;
 
 	public Integer getId() {
-		return professorId;
+		return id;
 	}
 
 	public String getName() {
@@ -19,7 +19,7 @@ public class Professor {
 	}
 	
 	public void setId(Integer i) {
-		professorId = i;
+		id = i;
 	}
 
 	public void setName(String n) {

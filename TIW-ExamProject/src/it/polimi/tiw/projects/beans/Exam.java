@@ -1,78 +1,50 @@
 package it.polimi.tiw.projects.beans;
 
 public class Exam {
-	private int examId;
+	private Integer id;
 	private Student student;
 	private Appello appello;
 	private Status status;
 	private String grade;
 	
-	public int getExamId() {
-		return examId;
-	}
-	
-	public String getName() {
-		return student.getName();
-	}
-
-	public String getSurname() {
-		return student.getSurname();
-	}
-	
-	public Integer getStudentId() {
-		return student.getId();
-	}
-	
-	public String getEmail() {
-		return student.getEmail();
-	}
-	
-	public String getCorsoDiLaurea() {
-		return student.getCorsoDiLaurea();
+	public Integer getId() {
+		return id;
 	}
 	
 	public Student getStudent() {
-		return this.student;
+		return student;
 	}
 	
-	public Integer getCourseId() {
-		return this.appello.getCourseId();
-	}
-	
-	public String getDate() {
-		return this.appello.getDate().toString();
-	}
-	
-	public Integer getAppelloId() {
-		return this.appello.getAppelloId();
+	public Appello getAppello() {
+		return appello;
 	}
 	
 	public String getStatus() {
-		return this.status.toString();
+		return status.toString();
 	}
 	
 	public String getGrade() {
-		return this.grade;
+		return grade;
 	}
 	
-	public void setExamId(int examId) {
-		this.examId = examId;
+	public void setId(Integer i) {
+		id = i;
 	}
 	
-	public void setStudent(Student student) {
-		this.student = student;
+	public void setStudent(Student s) {
+		student = s;
 	}
 	
-	public void setAppello(Appello appello) {
-		this.appello = appello;
+	public void setAppello(Appello a) {
+		appello = a;
 	}
 	
-	public void setStatus(Status status) {
-		this.status = status;
+	public void setStatus(Status s) {
+		status = s;
 	}
 	
-	public void setGrade(String grade) {
-		this.grade = grade;
+	public void setGrade(String g) {
+		grade = g;
 	}
 	
 }

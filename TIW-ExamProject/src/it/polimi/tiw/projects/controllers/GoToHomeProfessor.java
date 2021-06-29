@@ -51,22 +51,22 @@ public class GoToHomeProfessor extends HttpServlet {
 		Professor professor = (Professor) request.getSession().getAttribute("professor");
 		
 		String chosenCourse = request.getParameter("courseId");
-		ProfessorDAO prof = new ProfessorDAO(connection);
+		ProfessorDAO pDao = new ProfessorDAO(connection);
 		List<Course> courses = null;
 		List<Appello> appelli = null;
 		Integer chosenCourseId = 0;
 		String chosenCourseName = "";
 		try {
-			courses = prof.findCourses(professor.getId().toString());
+			courses = pDao.findCourses(professor.getId());
 			if (chosenCourse == null) {
-				chosenCourseId = prof.findDefaultCourse(professor.getId().toString());
+				chosenCourseId = pDao.findDefaultCourse(professor.getId());
 			} else {
 				chosenCourseId = Integer.parseInt(chosenCourse);
 			}
 			CourseDAO cDao = new CourseDAO(connection);
-			appelli = cDao.findAppelli(chosenCourseId.toString());
+			appelli = cDao.findAppelli(chosenCourseId);
 			for(Course c : courses) 
-				if(c.getCourseId() == chosenCourseId)
+				if(c.getId() == chosenCourseId)
 					chosenCourseName = c.getName();
 		} catch (SQLException e) {
 			// throw new ServletException(e);

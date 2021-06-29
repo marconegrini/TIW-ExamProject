@@ -3,32 +3,32 @@ package it.polimi.tiw.projects.beans;
 import java.sql.Date;
 
 public class Appello {
-	private Integer appelloId;
-	private int courseId;
+	private Integer id;
 	private Date date;
-	
-	public Integer getAppelloId() {
-		return appelloId;
+	private Course course;
+
+	public Integer getId() {
+		return id;
 	}
-	
-	public int getCourseId() {
-		return courseId;
-	}
-	
+
 	public String getDate() {
 		return date.toString();
 	}
-	
-	public void setAppelloId(Integer appelloId) {
-		this.appelloId = appelloId;
+
+	public Course getCourse() {
+		return course;
 	}
-	
-	public void setCourseId(Integer id) {
-		courseId = id;
+
+	public void setId(Integer i) {
+		id = i;
 	}
-	
+
 	public void setDate(Date d) {
 		date = d;
 	}
-	
+
+	public void setCourse(Course c) {
+		course = c;
+	}
+
 }

@@ -57,22 +57,22 @@ public class GoToHomeStudent extends HttpServlet {
 		Student student = (Student) request.getSession().getAttribute("student");
 		
 		String chosenCourse = request.getParameter("courseId");
-		StudentDAO stud = new StudentDAO(connection);
+		StudentDAO sDao = new StudentDAO(connection);
 		List<Course> courses = null;
 		List<Appello> appelli = null;
 		Integer chosenCourseId = 0;
 		String chosenCourseName = "";
 		try {
-			courses = stud.findCourses(student.getId().toString());
+			courses = sDao.findCourses(student.getId());
 			if (chosenCourse == null) {
-				chosenCourseId = stud.findDefaultCourse(student.getId().toString());
+				chosenCourseId = sDao.findDefaultCourse(student.getId());
 			} else {
 				chosenCourseId = Integer.parseInt(chosenCourse);
 			}
 			CourseDAO cDao = new CourseDAO(connection);
-			appelli = cDao.findAppelli(chosenCourseId.toString());
+			appelli = cDao.findAppelli(chosenCourseId);
 			for(Course c : courses) 
-				if(c.getCourseId() == chosenCourseId)
+				if(c.getId() == chosenCourseId)
 					chosenCourseName = c.getName();
 		} catch (SQLException e) {
 			// throw new ServletException(e);

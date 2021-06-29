@@ -61,11 +61,9 @@ public class UpdateGrade extends HttpServlet {
 		
 		Integer examId = null;
 		String grade = null;
-		String courseName = null;
 		try {
 			examId = Integer.parseInt(request.getParameter("examId"));
 			grade = request.getParameter("grade");
-			courseName = request.getParameter("courseName");
 		} catch (IllegalArgumentException | NullPointerException e) {
 			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid parameter value");
 			return;
@@ -84,7 +82,10 @@ public class UpdateGrade extends HttpServlet {
 		}
 		
 		String ctxpath = getServletContext().getContextPath();
-		String path = ctxpath + "/GoToRegisteredStudents?appelloDate=" + exam.getDate() + "&appelloId=" + exam.getAppelloId().toString() + "&courseName=" + courseName;
+		String path = ctxpath +
+				"/GoToRegisteredStudents?appelloDate=" + exam.getAppello().getDate() +
+				"&appelloId=" + exam.getAppello().getId() +
+				"&courseName=" + exam.getAppello().getCourse().getName();
 		response.sendRedirect(path);
 	}
 	

@@ -6,7 +6,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import it.polimi.tiw.projects.beans.Appello;
+import it.polimi.tiw.projects.beans.Course;
 import it.polimi.tiw.projects.beans.Exam;
+import it.polimi.tiw.projects.beans.Professor;
 import it.polimi.tiw.projects.beans.Status;
 import it.polimi.tiw.projects.beans.Student;
 
@@ -20,7 +22,18 @@ public class ExamDAO {
 
 	public Exam findExamById(String examId) throws SQLException {
 		Exam exam = new Exam();
-		String query =	"SELECT S.studentId, S.name, S.surname, S.email, S.corsoDiLaurea, A.courseId, A.appelloId, A.date, E.examId, E.status, E.grade FROM exams AS E, students AS S, appelli AS A  WHERE E.student = S.studentId AND E.appelloId = A.appelloId AND E.examId = ?";
+		String query = """
+				SELECT
+					S.studentId, S.name AS s_name, S.surname AS s_surname, S.email, S.corsoDiLaurea,
+					A.appelloId, A.date,
+					C.courseId, C.code, C.name AS c_name,
+					P.professorId, P.name AS p_name, P.surname AS p_surname,
+					E.examId, E.status, E.grade
+				FROM
+					exams AS E, students AS S, appelli AS A, courses AS C, professors AS P
+				WHERE
+					E.examId = ? AND S.studentId = E.student AND A.appelloId = E.appelloId AND C.courseId = A.courseId AND P.professorId = C.professor
+				""";
 		try (PreparedStatement pstatement = con.prepareStatement(query);) {
 			pstatement.setString(1, examId);
 			try (ResultSet result = pstatement.executeQuery();) {
@@ -29,19 +42,35 @@ public class ExamDAO {
 				else {
 					result.next();
 					Student student = new Student();
+					Professor professor = new Professor();
+					Course course = new Course();
 					Appello appello = new Appello();
 					
+					// Setting student's info
 					student.setId(result.getInt("studentId"));
-					student.setName(result.getString("name"));
-					student.setSurname(result.getString("surname"));
+					student.setName(result.getString("s_name"));
+					student.setSurname(result.getString("s_surname"));
 					student.setEmail(result.getString("email"));
-					student.setCorsoDiLaurea(result.getString("corsoDiLaurea"));
+					student.setBachelorCourse(result.getString("corsoDiLaurea"));
 					
-					appello.setAppelloId(result.getInt("appelloId"));
-					appello.setCourseId(result.getInt("courseId"));
+					// Setting professor's info
+					professor.setId(result.getInt("professorId"));
+					professor.setName(result.getString("p_name"));
+					professor.setSurname(result.getString("p_surname"));
+					
+					// Setting course's info
+					course.setId(result.getInt("courseId"));
+					course.setCode(result.getString("code"));
+					course.setName(result.getString("c_name"));
+					course.setProfessor(professor);
+					
+					// Setting appello's info
+					appello.setId(result.getInt("appelloId"));
 					appello.setDate(result.getDate("date"));
+					appello.setCourse(course);
 					
-					exam.setExamId(result.getInt("examId"));
+					// Setting exam's info
+					exam.setId(result.getInt("examId"));
 					exam.setAppello(appello);
 					exam.setStatus(Status.valueOf(result.getString("status")));
 					exam.setGrade(result.getString("grade"));
@@ -104,6 +133,7 @@ public class ExamDAO {
 	}
 	
 	public void verbalizza(Integer appelloId) throws SQLException {
+		// TODO: transaction with rollback
 		String updateRefused = "UPDATE exams SET grade = 'RIMANDATO' WHERE appelloId = ? AND status = 'RIFIUTATO'";
 		try (PreparedStatement pstatement = con.prepareStatement(updateRefused);){
 			pstatement.setInt(1, appelloId);

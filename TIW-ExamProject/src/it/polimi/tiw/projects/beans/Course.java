@@ -1,26 +1,14 @@
 package it.polimi.tiw.projects.beans;
 
-public class Course {
+public class Course {	
 	
-	private int courseId;
+	private Integer id;
 	private String code;
 	private String name;
 	private Professor professor;
-	
-	public int getProfId() {
-		return professor.getId();
-	}
-	
-	public String getProfName() {
-		return professor.getName();
-	}
-	
-	public String getProfSurname() {
-		return professor.getSurname();
-	}
 
-	public int getCourseId() {
-		return courseId;
+	public Integer getId() {
+		return id;
 	}
 	
 	public String getCode() {
@@ -34,9 +22,9 @@ public class Course {
 	public Professor getProfessor() {
 		return professor;
 	}
-
-	public void setCourseId(Integer i) {
-		courseId = i;
+	
+	public void setId(Integer i) {
+		id = i;
 	}
 	
 	public void setCode(String c) {
@@ -50,5 +38,5 @@ public class Course {
 	public void setProfessor(Professor p) {
 		professor = p;
 	}
-
+	
 }

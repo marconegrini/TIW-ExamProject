@@ -19,12 +19,23 @@ public class ProfessorDAO {
 		this.con = connection;
 	}
 
-	public Professor checkProfessor(String id, String usrn, String pwd) throws SQLException {
-		String query =	"SELECT  professorId, name, surname FROM professors WHERE professorId = ? AND profUser = ? AND profPass = ?";
+	public Professor checkProfessor(String i, String u, String p) throws SQLException {
+		String query = """
+				SELECT
+					P.professorId, P.name, P.surname
+				FROM
+					professors AS P,
+					users AS U
+				WHERE
+					P.professorId = U.userId AND
+					U.userId = ? AND
+					U.username = ? AND
+					U.password = ?
+				""";
 		try (PreparedStatement pstatement = con.prepareStatement(query);) {
-			pstatement.setString(1, id);
-			pstatement.setString(2, usrn);
-			pstatement.setString(3, pwd);
+			pstatement.setString(1, i);
+			pstatement.setString(2, u);
+			pstatement.setString(3, p);
 			try (ResultSet result = pstatement.executeQuery();) {
 				if (!result.isBeforeFirst()) // no results, credential check failed
 					return null;
@@ -40,26 +51,40 @@ public class ProfessorDAO {
 		}
 	}
 	
-	public List<Course> findCourses(String professorId) throws SQLException {
+	public List<Course> findCourses(Integer i) throws SQLException {
 		List<Course> courses = new ArrayList<Course>();
-		String query = "SELECT C.courseId, C.code, C.name, C.professor, P.name AS profname, P.surname" + " "
-				+ "FROM courses AS C, professors AS P" + " "
-				+ "WHERE C.professor = ? AND C.professor = P.professorId" + " "
-				+ "ORDER BY C.name ASC";
+		String query = """
+				SELECT
+					C.courseId, C.code, C.name AS c_name,
+					P.professorId, P.name AS p_name, P.surname
+				FROM
+					professors AS P,
+					courses AS C
+				WHERE
+					P.professorId = C.professor AND
+					P.professorId = ?
+				ORDER BY
+					C.name ASC
+				""";
 		try (PreparedStatement pstatement = con.prepareStatement(query);) {
-			pstatement.setString(1, professorId);
+			pstatement.setInt(1, i);
 			try (ResultSet result = pstatement.executeQuery();) {
 				while (result.next()) {
 					Course course = new Course();
 					Professor professor = new Professor();
-					professor.setId(result.getInt("professor"));
-					professor.setName("profname");
+					
+					// Setting professor's info
+					professor.setId(result.getInt("professorId"));
+					professor.setName("p_name");
 					professor.setSurname("surname");
 					
-					course.setCourseId(result.getInt("courseId"));
+					// Setting course's info
+					course.setId(result.getInt("courseId"));
 					course.setCode(result.getString("code"));
-					course.setName(result.getString("name"));
+					course.setName(result.getString("c_name"));
 					course.setProfessor(professor);
+					
+					// Adding course
 					courses.add(course);
 				}
 			}
@@ -67,16 +92,9 @@ public class ProfessorDAO {
 		return courses;
 	}
 	
-	public Integer findDefaultCourse(String professorId) throws SQLException {
-		String query = "SELECT courseId, code, name, professor FROM courses WHERE professor = ? ORDER BY name ASC LIMIT 1";
-		Integer cid = 0;
-		try (PreparedStatement pstatement = con.prepareStatement(query);) {
-			pstatement.setString(1, professorId);
-			try (ResultSet result = pstatement.executeQuery();) {
-				result.next();
-				cid = result.getInt("courseId");
-			}
-		}
-		return cid;
+	public Integer findDefaultCourse(Integer i) throws SQLException {
+		List<Course> courses = findCourses(i);
+		return courses.size() > 0 ? courses.get(0).getId() : null;
 	}
+	
 }

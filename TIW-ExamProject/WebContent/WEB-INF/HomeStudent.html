@@ -15,7 +15,7 @@
 	<span th:text="${session.student.surname}"></span> <br>
 	<span th:text="${session.student.email}"></span> <br>
 	Corso di laurea:
-	<span th:text="${session.student.corsoDiLaurea}"></span> <br>
+	<span th:text="${session.student.bachelorCourse}"></span> <br>
 	
 	<table>
 		<tr>
@@ -28,9 +28,9 @@
 						</tr>
 					</thead>
 					<tbody>
-						<tr th:each="p : ${courses}" th:class="(${p.courseId} == ${chosenCourseId})? 'current'">
+						<tr th:each="p : ${courses}" th:class="(${p.id} == ${chosenCourseId})? 'current'">
 							<td th:text="${p.code}"></td>
-							<td><a href="HomeStudent.html" th:href="@{/GoToHomeStudent(courseId=${p.courseId})}"><span
+							<td><a href="HomeStudent.html" th:href="@{/GoToHomeStudent(courseId=${p.id})}"><span
 									th:text="${p.name}"></span></a></td>
 						</tr>
 					</tbody>
@@ -39,19 +39,19 @@
 			<td>
 				<div th:if="${not #lists.isEmpty(appelli)}">
 						Choose an appello for <span th:text="${chosenCourseName}"></span>:
-							<table border="1">
-								<thead>
-									<tr>
-									<th>Date</th>
-									</tr>
-								</thead>
-								<tbody>
-									<tr th:each="a : ${appelli}">
-										<td th:text="${a.date}"></td>
-										<td><a th:href="@{/GoToExamResult(course=${a.courseId}, appello=${a.date})}">Details</a></td>
-									</tr>
-								</tbody>
-							</table>
+						<table border="1">
+							<thead>
+								<tr>
+								<th>Date</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr th:each="a : ${appelli}">
+									<td th:text="${a.date}"></td>
+									<td><a th:href="@{/GoToExamResult(course=${a.course.id}, appello=${a.date})}">Details</a></td>
+								</tr>
+							</tbody>
+						</table>
 				</div>
 			</td>
 		</tr>

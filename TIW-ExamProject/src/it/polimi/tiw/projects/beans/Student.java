@@ -2,15 +2,15 @@ package it.polimi.tiw.projects.beans;
 
 public class Student {
 	
-	private Integer studentId;
+	private Integer id;
 	private String name;
 	private String surname;
 	private String email;
-	private String corsoDiLaurea;
+	private String bachelorCourse;
 	
 
 	public Integer getId() {
-		return studentId;
+		return id;
 	}
 
 	public String getName() {
@@ -25,12 +25,12 @@ public class Student {
 		return email;
 	}
 	
-	public String getCorsoDiLaurea() {
-		return corsoDiLaurea;
+	public String getBachelorCourse() {
+		return bachelorCourse;
 	}
 	
 	public void setId(Integer i) {
-		studentId = i;
+		id = i;
 	}
 
 	public void setName(String n) {
@@ -45,8 +45,8 @@ public class Student {
 		email = e;
 	}
 		
-	public void setCorsoDiLaurea(String cdl) {
-		corsoDiLaurea = cdl;
+	public void setBachelorCourse(String bc) {
+		bachelorCourse = bc;
 	}
 
 }
