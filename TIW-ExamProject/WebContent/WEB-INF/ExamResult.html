@@ -13,7 +13,7 @@
 	
 exam result
 
-	<div th:switch=${examInfo.status}>
+	<div th:switch=${exam.status}>
 	
 		<div th:case="'NONINSERITO'">
 			<p>Voto non ancora definito</p>
@@ -25,76 +25,33 @@ exam result
 		
 		<div th:case="*">
 			<p>Student</p>
-			Id: <span th:text="${examInfo.studentId}"></span><br>
-			Name: <span th:text="${examInfo.name}"></span><br>
-			Surname: <span th:text="${examInfo.surname}"></span><br>
-			Email: <span th:text="${examInfo.email}"></span><br>
-			Bachelor course: <span th:text="${examInfo.corsoDiLaurea}"></span><br>
+			Id: <span th:text="${exam.student.id}"></span><br>
+			Name: <span th:text="${exam.student.name}"></span><br>
+			Surname: <span th:text="${exam.student.surname}"></span><br>
+			Email: <span th:text="${exam.student.email}"></span><br>
+			Bachelor course: <span th:text="${exam.student.bachelorCourse}"></span><br>
 			<br>
 			<p>Course</p>
-			Code: <span th:text="${courseInfo.code}"></span><br>
-			Name: <span th:text="${courseInfo.name}"></span><br>
-			Professor: <span th:text="${courseInfo.profName}"></span> <span th:text="${courseInfo.profSurname}"></span><br>
+			Code: <span th:text="${exam.appello.course.code}"></span><br>
+			Name: <span th:text="${exam.appello.course.name}"></span><br>
+			Professor: <span th:text="${exam.appello.course.professor.name}"></span> <span th:text="${exam.appello.course.professor.surname}"></span><br>
 			<br>
 			<p>Session</p>
-			Date: <span th:text="${examInfo.date}"></span><br>
+			Date: <span th:text="${exam.appello.date}"></span><br>
 			<br>
-			Grade: <span th:text="${examInfo.grade}"></span><br>
-			Stsatus: <span th:text="${examInfo.status}"></span><br>
+			Grade: <span th:text="${exam.grade}"></span><br>
+			Stsatus: <span th:text="${exam.status}"></span><br>
 			<br>
 			
 			<div th:if="${refusable}">
 				<form th:action="@{/Rifiuta}" method="POST">
-					<input type="hidden" name="examId" th:value="${examInfo.examId}"/>
-					<input type="hidden" name="appelloDate" th:value="${examInfo.date}"/>
-					<input type="hidden" name="courseId" th:value="${courseInfo.courseId}"/>
+					<input type="hidden" name="examId" th:value="${exam.id}"/>
+					<input type="hidden" name="date" th:value="${exam.appello.date}"/>
+					<input type="hidden" name="courseId" th:value="${exam.appello.course.id}"/>
 					<input type="submit" name="submit" value="Refuse grade"/>
 				</form>
 			</div>
 		</div>
-		<!--
-		<div th:case="'RIFIUTATO'">
-			<p>Student</p>
-			Id: <span th:text="${examInfo.studentId}"></span><br>
-			Name: <span th:text="${examInfo.name}"></span><br>
-			Surname: <span th:text="${examInfo.surname}"></span><br>
-			Email: <span th:text="${examInfo.email}"></span><br>
-			Bachelor course: <span th:text="${examInfo.corsoDiLaurea}"></span><br>
-			<br>
-			<p>Course</p>
-			Code: <span th:text="${courseInfo.code}"></span><br>
-			Name: <span th:text="${courseInfo.name}"></span><br>
-			Professor: <span th:text="${courseInfo.profName}"></span> <span th:text="${courseInfo.profSurname}"></span><br>
-			<br>
-			<p>Session</p>
-			Date: <span th:text="${examInfo.date}"></span><br>
-			<br>
-			Grade: <span th:text="${examInfo.grade}"></span><br>
-			Info: <span>Il voto è stato rifiutato.</span><br>
-			<br>
-		</div>
-		
-		<div th:case="'VERBALIZZATO'">
-			<p>Student</p>
-			Id: <span th:text="${examInfo.studentId}"></span><br>
-			Name: <span th:text="${examInfo.name}"></span><br>
-			Surname: <span th:text="${examInfo.surname}"></span><br>
-			Email: <span th:text="${examInfo.email}"></span><br>
-			Bachelor course: <span th:text="${examInfo.corsoDiLaurea}"></span><br>
-			<br>
-			<p>Course</p>
-			Code: <span th:text="${courseInfo.code}"></span><br>
-			Name: <span th:text="${courseInfo.name}"></span><br>
-			Professor: <span th:text="${courseInfo.profName}"></span> <span th:text="${courseInfo.profSurname}"></span><br>
-			<br>
-			<p>Session</p>
-			Date: <span th:text="${examInfo.date}"></span><br>
-			<br>
-			Grade: <span th:text="${examInfo.grade}"></span><br>
-			Info: <span>Il voto è stato verbalizzato.</span><br>
-			<br>
-		</div>
-		-->
 	</div>
 </body>
 </html>

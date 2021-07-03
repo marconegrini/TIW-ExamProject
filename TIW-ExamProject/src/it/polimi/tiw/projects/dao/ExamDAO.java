@@ -4,6 +4,9 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 import it.polimi.tiw.projects.beans.Appello;
 import it.polimi.tiw.projects.beans.Course;
@@ -88,7 +91,7 @@ public class ExamDAO {
 	 * @param studentId	The student who took the exam.
 	 * @param appelloId	The appello in which the student took the exam.
 	 * @return	The exam id if everything's ok, null otherwise.
-	 * @throws SQLException	If query fails.
+	 * @throws SQLException	If the query fails.
 	 */
 	public Integer getExamIdByStudentAndSession(Integer studentId, Integer appelloId) throws SQLException {
 		Integer id = null;
@@ -132,17 +135,80 @@ public class ExamDAO {
 		}
 	}
 	
-	public void verbalizza(Integer appelloId) throws SQLException {
-		// TODO: transaction with rollback
+	public void verbalizza(Integer i) throws SQLException {
+		String createReport = "INSERT INTO reports (created_at) VALUES (?)";
+		PreparedStatement s1 = null;
+		String queryReportPK = "SELECT LAST_INSERT_ID() FROM reports";
+		Statement s2 = null;
 		String updateRefused = "UPDATE exams SET grade = 'RIMANDATO' WHERE appelloId = ? AND status = 'RIFIUTATO'";
-		try (PreparedStatement pstatement = con.prepareStatement(updateRefused);){
-			pstatement.setInt(1, appelloId);
-			pstatement.executeUpdate();
-		}
-		String query = "UPDATE exams SET status = 'VERBALIZZATO' WHERE appelloId = ? AND (status = 'PUBBLICATO' OR STATUS = 'RIFIUTATO')";
-		try (PreparedStatement pstatement = con.prepareStatement(query);){
-			pstatement.setInt(1, appelloId);
-			pstatement.executeUpdate();
+		PreparedStatement s3 = null;
+		String updateStatus = "UPDATE exams SET status = 'VERBALIZZATO', reportId = ? WHERE appelloId = ? AND (status = 'PUBBLICATO' OR STATUS = 'RIFIUTATO')";
+		PreparedStatement s4 = null;
+		
+		// disabilito l'applicazione automatica delle modifiche
+		con.setAutoCommit(false);
+		
+		try {
+			// (prepared) statement 1
+			s1 = con.prepareStatement(createReport);
+			Timestamp created_at = Timestamp.valueOf(LocalDateTime.now());
+			s1.setTimestamp(1, created_at);
+			s1.executeUpdate();
+			
+			// statement 2 deve essere il primo eseguito
+			s2 = con.createStatement();
+			ResultSet rs = s2.executeQuery(queryReportPK);
+			rs.next();
+			Integer reportId = rs.getInt(1);
+
+			// (prepared) statement 3
+			s3 = con.prepareStatement(updateRefused);
+			s3.setInt(1, i);
+			s3.executeUpdate();
+
+			// (prepared) statement 1
+			s4 = con.prepareStatement(updateStatus);
+			s4.setInt(1, reportId);
+			s4.setInt(2, i);
+			s4.executeUpdate();
+			
+			// applico le modifiche al database
+			con.commit();
+		} catch (SQLException e) {
+			// se qualcosa è andato storto ripristino lo stato precedente
+			con.rollback();
+			//throw e;
+		} finally {
+			// riabilito le modifiche automatiche e chiudo tutti gli statement (non avendo fatto try with resource)
+			con.setAutoCommit(true);
+			if (s1 != null) {
+				try {
+					s1.close();
+				} catch (SQLException e) {
+					throw e;
+				}
+			}
+			if (s2 != null) {
+				try {
+					s2.close();
+				} catch (SQLException e) {
+					throw e;
+				}
+			}
+			if (s3 != null) {
+				try {
+					s3.close();
+				} catch (SQLException e) {
+					throw e;
+				}
+			}
+			if (s4 != null) {
+				try {
+					s4.close();
+				} catch (SQLException e) {
+					throw e;
+				}
+			}
 		}
 	}
 	

@@ -25,7 +25,7 @@
 						</tr>
 					</thead>
 					<tbody>
-						<tr th:each="p : ${courses}" th:class="(${p.id} == ${chosenCourseId})? 'current'">
+						<tr th:each="p : ${courses}" th:class="(${p.id} == ${chosenCourse.id})? 'current'">
 							<td th:text="${p.code}"></td>
 							<td><a href="HomeProfessor.html" th:href="@{/GoToHomeProfessor(courseId=${p.id})}"><span
 									th:text="${p.name}"></span></a></td>
@@ -36,7 +36,7 @@
 			<td>
 				<div th:if="${not #lists.isEmpty(appelli)}">
 					
-						Choose an appello for <span th:text="${chosenCourseName}"></span>:
+						Choose an appello for <span th:text="${chosenCourse.name}"></span>:
 							<table border="1">
 								<thead>
 									<tr>
@@ -46,7 +46,7 @@
 								<tbody>
 									<tr th:each="a : ${appelli}">
 										<td th:text="${a.date}"></td>
-										<td><a th:href="@{/GoToRegisteredStudents(appelloDate=${a.date}, appelloId=${a.id}, courseName=${chosenCourseName})}">Details</a></td>
+										<td><a th:href="@{/GoToRegisteredStudents(date=${a.date}, appelloId=${a.id}, courseName=${chosenCourse.name})}">Details</a></td>
 									</tr>
 								</tbody>
 							</table>

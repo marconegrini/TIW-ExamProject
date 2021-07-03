@@ -33,7 +33,6 @@ public class GoToExamDetails extends HttpServlet {
        
 	public GoToExamDetails() {
 	        super();
-	        // TODO Auto-generated constructor stub
 	}
 	 
 

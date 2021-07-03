@@ -56,24 +56,21 @@ public class GoToHomeStudent extends HttpServlet {
 		
 		Student student = (Student) request.getSession().getAttribute("student");
 		
-		String chosenCourse = request.getParameter("courseId");
 		StudentDAO sDao = new StudentDAO(connection);
 		List<Course> courses = null;
 		List<Appello> appelli = null;
-		Integer chosenCourseId = 0;
-		String chosenCourseName = "";
+		Integer chosenCourseId;
+		CourseDAO cDao = new CourseDAO(connection);
+		Course course = null;
+		
 		try {
 			courses = sDao.findCourses(student.getId());
-			if (chosenCourse == null) {
-				chosenCourseId = sDao.findDefaultCourse(student.getId());
-			} else {
-				chosenCourseId = Integer.parseInt(chosenCourse);
-			}
-			CourseDAO cDao = new CourseDAO(connection);
+			
+			chosenCourseId = request.getParameter("courseId") == null ?
+					sDao.findDefaultCourse(student.getId()) : Integer.parseInt(request.getParameter("courseId"));
+			course = cDao.findCourseById(chosenCourseId);
+			
 			appelli = cDao.findAppelli(chosenCourseId);
-			for(Course c : courses) 
-				if(c.getId() == chosenCourseId)
-					chosenCourseName = c.getName();
 		} catch (SQLException e) {
 			// throw new ServletException(e);
 			response.sendError(HttpServletResponse.SC_BAD_GATEWAY, "Failure in student's courses database extraction");
@@ -83,8 +80,7 @@ public class GoToHomeStudent extends HttpServlet {
 		ServletContext servletContext = getServletContext();
 		final WebContext ctx = new WebContext(request, response, servletContext, request.getLocale());
 		ctx.setVariable("courses", courses);
-		ctx.setVariable("chosenCourseId", chosenCourseId);
-		ctx.setVariable("chosenCourseName", chosenCourseName);
+		ctx.setVariable("chosenCourse", course);
 		ctx.setVariable("appelli", appelli);
 
 		templateEngine.process(path, ctx, response.getWriter());

@@ -11,8 +11,7 @@
 	</div>
 	
 	<h2>Registered students for 
-	<span th:text="${courseName}"></span>, <span th:text="${appelloDate}"></span>
-	<!-- course=${course}, appello=${sppello}, courseName=${courseName} -->
+	<span th:text="${courseName}"></span>, <span th:text="${date}"></span>
 	</h2>
 
 		<div th:if="${not #lists.isEmpty(registeredStudents)}">
@@ -21,25 +20,25 @@
 						<thead>
 							<tr>
 								<th>
-								<a href="RegisteredStudents.html" th:href="@{/GoToRegisteredStudents(sortBy='studentId', appelloDate=${appelloDate}, appelloId=${appelloId}, courseName=${courseName})}">Student id</a>
+								<a href="RegisteredStudents.html" th:href="@{/GoToRegisteredStudents(sortBy='studentId', date=${date}, appelloId=${appelloId}, courseName=${courseName})}">Student id</a>
 								</th>
 								<th>
-								<a href="RegisteredStudents.html" th:href="@{/GoToRegisteredStudents(sortBy='surname', appelloDate=${appelloDate}, appelloId=${appelloId}, courseName=${courseName})}">Surname</a>
+								<a href="RegisteredStudents.html" th:href="@{/GoToRegisteredStudents(sortBy='surname', date=${date}, appelloId=${appelloId}, courseName=${courseName})}">Surname</a>
 								</th>
 								<th>
-								<a href="RegisteredStudents.html" th:href="@{/GoToRegisteredStudents(sortBy='name', appelloDate=${appelloDate}, appelloId=${appelloId}, courseName=${courseName})}">Name</a>
+								<a href="RegisteredStudents.html" th:href="@{/GoToRegisteredStudents(sortBy='name', date=${date}, appelloId=${appelloId}, courseName=${courseName})}">Name</a>
 								</th>
 								<th>
-								<a href="RegisteredStudents.html" th:href="@{/GoToRegisteredStudents(sortBy='email', appelloDate=${appelloDate}, appelloId=${appelloId}, courseName=${courseName})}">Email</a>
+								<a href="RegisteredStudents.html" th:href="@{/GoToRegisteredStudents(sortBy='email', date=${date}, appelloId=${appelloId}, courseName=${courseName})}">Email</a>
 								</th>
 								<th>
-								<a href="RegisteredStudents.html" th:href="@{/GoToRegisteredStudents(sortBy='corsoDiLaurea', appelloDate=${appelloDate}, appelloId=${appelloId}, courseName=${courseName})}">Corso di laurea</a>
+								<a href="RegisteredStudents.html" th:href="@{/GoToRegisteredStudents(sortBy='corsoDiLaurea', date=${date}, appelloId=${appelloId}, courseName=${courseName})}">Corso di laurea</a>
 								</th>
 								<th>
-								<a href="RegisteredStudents.html" th:href="@{/GoToRegisteredStudents(sortBy='grade', appelloDate=${appelloDate}, appelloId=${appelloId}, courseName=${courseName})}">Grade</a>
+								<a href="RegisteredStudents.html" th:href="@{/GoToRegisteredStudents(sortBy='grade', date=${date}, appelloId=${appelloId}, courseName=${courseName})}">Grade</a>
 								</th>
 								<th>
-								<a href="RegisteredStudents.html" th:href="@{/GoToRegisteredStudents(sortBy='status', appelloDate=${appelloDate}, appelloId=${appelloId}, courseName=${courseName})}">Status</a>
+								<a href="RegisteredStudents.html" th:href="@{/GoToRegisteredStudents(sortBy='status', date=${date}, appelloId=${appelloId}, courseName=${courseName})}">Status</a>
 								</th>
 								<th>     </th>
 								</tr>
@@ -57,8 +56,8 @@
 							</tr>
 						</tbody>
 					</table>
-					<a th:href="@{/Pubblica(appelloId=${appelloId}, appelloDate=${appelloDate}, courseName=${courseName})}">Pubblica</a> <br>
-					<a th:href="@{/Verbalizza(appelloId=${appelloId}, appelloDate=${appelloDate}, courseName=${courseName})}">Verbalizza</a>
+					<a th:href="@{/Pubblica(appelloId=${appelloId}, date=${date}, courseName=${courseName})}">Pubblica</a> <br>
+					<a th:href="@{/Verbalizza(appelloId=${appelloId}, date=${date}, courseName=${courseName})}">Verbalizza</a>
 					
  		 </div> 
 </body>

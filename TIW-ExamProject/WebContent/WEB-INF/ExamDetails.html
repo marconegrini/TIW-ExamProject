@@ -11,14 +11,14 @@
 	</div>
 	
 	Student: 
-	<span th:text="${exam.name}"></span> 
-	<span th:text="${exam.surname}"></span> <br>
+	<span th:text="${exam.student.name}"></span> 
+	<span th:text="${exam.student.surname}"></span> <br>
 	Student id:
-	<span th:text="${exam.studentId}"></span> <br>
+	<span th:text="${exam.student.id}"></span> <br>
 	Student email:
-	<span th:text="${exam.email}"></span> <br>
+	<span th:text="${exam.student.email}"></span> <br>
 	Corso di laurea:
-	<span th:text="${exam.corsoDiLaurea}"></span> <br>
+	<span th:text="${exam.student.bachelorCourse}"></span> <br>
 	
 	<div th:switch="${exam.status}">
 	
@@ -29,7 +29,7 @@
 				<option th:each="g : ${grades}" th:value="${g}"
 					th:text="${g}">grade</option>
 		 		</select> 
-					<input type="hidden" name="examId" th:value="${exam.examId}"> 
+					<input type="hidden" name="examId" th:value="${exam.id}"> 
 					<input type="hidden" name="courseName" th:value="${courseName}">
 					<input type="submit" name="submit" value="Submit Grade">
 			</form>
@@ -43,7 +43,7 @@
 				<option th:each="g : ${grades}" th:value="${g}"
 					th:text="${g}">grade</option>
 				</select> 
-				<input type="hidden" name="examId" th:value="${exam.examId}"> 
+				<input type="hidden" name="examId" th:value="${exam.id}"> 
 				<input type="hidden" name="courseName" th:value="${courseName}">
 				<input type="submit" name="submit" value="Submit Grade">
 			</form>

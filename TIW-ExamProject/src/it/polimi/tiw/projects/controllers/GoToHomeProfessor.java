@@ -32,7 +32,6 @@ public class GoToHomeProfessor extends HttpServlet {
 
 	public GoToHomeProfessor() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 
 	public void init() throws ServletException {
@@ -50,26 +49,22 @@ public class GoToHomeProfessor extends HttpServlet {
 				
 		Professor professor = (Professor) request.getSession().getAttribute("professor");
 		
-		String chosenCourse = request.getParameter("courseId");
 		ProfessorDAO pDao = new ProfessorDAO(connection);
 		List<Course> courses = null;
 		List<Appello> appelli = null;
-		Integer chosenCourseId = 0;
-		String chosenCourseName = "";
+		Integer chosenCourseId;
+		CourseDAO cDao = new CourseDAO(connection);
+		Course course = null;
+		
 		try {
 			courses = pDao.findCourses(professor.getId());
-			if (chosenCourse == null) {
-				chosenCourseId = pDao.findDefaultCourse(professor.getId());
-			} else {
-				chosenCourseId = Integer.parseInt(chosenCourse);
-			}
-			CourseDAO cDao = new CourseDAO(connection);
+			
+			chosenCourseId = request.getParameter("courseId") == null ?
+					pDao.findDefaultCourse(professor.getId()) : Integer.parseInt(request.getParameter("courseId"));
+			course = cDao.findCourseById(chosenCourseId);
+			
 			appelli = cDao.findAppelli(chosenCourseId);
-			for(Course c : courses) 
-				if(c.getId() == chosenCourseId)
-					chosenCourseName = c.getName();
 		} catch (SQLException e) {
-			// throw new ServletException(e);
 			e.printStackTrace();
 			response.sendError(HttpServletResponse.SC_BAD_GATEWAY, "Failure in professor's courses database extraction");
 		}
@@ -78,8 +73,7 @@ public class GoToHomeProfessor extends HttpServlet {
 		ServletContext servletContext = getServletContext();
 		final WebContext ctx = new WebContext(request, response, servletContext, request.getLocale());
 		ctx.setVariable("courses", courses);
-		ctx.setVariable("chosenCourseId", chosenCourseId);
-		ctx.setVariable("chosenCourseName", chosenCourseName);
+		ctx.setVariable("chosenCourse", course);
 		ctx.setVariable("appelli", appelli);
 
 		templateEngine.process(path, ctx, response.getWriter());

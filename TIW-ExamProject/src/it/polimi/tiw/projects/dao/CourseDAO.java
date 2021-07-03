@@ -167,7 +167,7 @@ public class CourseDAO {
 		return appelli;
 	}
 	
-	public List<Exam> findRegisteredStudents(Integer appelloId, String sortBy, String order) throws SQLException{
+	public List<Exam> findRegisteredStudents(Integer appelloId, String sortBy, Order order) throws SQLException{
 		List<Exam> registeredStudents = new ArrayList<Exam>();
 		String query = """
 				SELECT
@@ -189,19 +189,17 @@ public class CourseDAO {
 					S.studentId = E.student AND
 					A.appelloId = ?
 				""";
-		try {
-			Order orderType = Order.fromString(order);
-			query += switch(sortBy) {
-				case "studentId" -> " ORDER BY S.studentId " + orderType.name();
-				case "surname" -> " ORDER BY S.surname " + orderType.name();
-				case "name" -> " ORDER BY S.name " + orderType.name();
-				case "email" -> " ORDER BY S.email " + orderType.name();
-				case "corsoDiLaurea" -> " ORDER BY S.corsoDiLaurea " + orderType.name();
-				case "grade" -> " ORDER BY E.grade " + orderType.name();
-				case "status" -> " ORDER BY E.status " + orderType.name();
-				default -> "";
-			};
-		} catch (IllegalArgumentException ignored) {}
+		
+		query += switch(sortBy) {
+			case "studentId" -> " ORDER BY S.studentId " + order.name();
+			case "surname" -> " ORDER BY S.surname " + order.name();
+			case "name" -> " ORDER BY S.name " + order.name();
+			case "email" -> " ORDER BY S.email " + order.name();
+			case "corsoDiLaurea" -> " ORDER BY S.corsoDiLaurea " + order.name();
+			case "grade" -> " ORDER BY E.grade " + order.name();
+			case "status" -> " ORDER BY E.status " + order.name();
+			default -> "";
+		};
 			
 		try (PreparedStatement pstatement = con.prepareStatement(query);) {
 			pstatement.setString(1, appelloId.toString());

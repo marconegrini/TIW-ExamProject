@@ -119,8 +119,7 @@ public class GoToExamResult extends HttpServlet {
 		final WebContext ctx = new WebContext(request, response, servletContext, request.getLocale());
 		
 		ctx.clearVariables();
-		ctx.setVariable("examInfo", exam);
-		ctx.setVariable("courseInfo", course);
+		ctx.setVariable("exam", exam);
 		ctx.setVariable("refusable", refusable);
 		
 		this.templateEngine.process(path, ctx, response.getWriter());

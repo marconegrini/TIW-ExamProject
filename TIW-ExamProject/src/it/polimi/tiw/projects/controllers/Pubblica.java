@@ -34,7 +34,6 @@ public class Pubblica extends HttpServlet {
      */
     public Pubblica() {
         super();
-        // TODO Auto-generated constructor stub
     }
     
     public void init() throws ServletException{
@@ -51,6 +50,14 @@ public class Pubblica extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		doPost(request, response);
+		// response.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED, "Only POST requests allowed here");
+	}
+
+	/**
+	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
+	 */
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		
 		ExamDAO examDao = new ExamDAO(connection);
 		Integer appelloId = null;
@@ -59,9 +66,10 @@ public class Pubblica extends HttpServlet {
 		
 		try {
 			appelloId = Integer.parseInt(request.getParameter("appelloId"));
-			appelloDate = Date.valueOf(request.getParameter("appelloDate"));
+			appelloDate = Date.valueOf(request.getParameter("date"));
 			courseName = request.getParameter("courseName");
 		} catch (IllegalArgumentException | NullPointerException e) {
+			e.printStackTrace();
 			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid parameter value");
 			return;
 		}
@@ -69,21 +77,15 @@ public class Pubblica extends HttpServlet {
 		try {
 			examDao.pubblica(appelloId);
 		} catch(SQLException sqle) {
+			sqle.printStackTrace();
 			response.sendError(HttpServletResponse.SC_BAD_GATEWAY, "Database failure while updating grade");
 			return;
 		}
 	
+		// POST-REDIRECT-GET
 		String ctxpath = getServletContext().getContextPath();
-		String path = ctxpath + "/GoToRegisteredStudents?appelloDate=" + appelloDate + "&appelloId=" + appelloId.toString() + "&courseName=" + courseName;
+		String path = ctxpath + "/GoToRegisteredStudents?date=" + appelloDate + "&appelloId=" + appelloId.toString() + "&courseName=" + courseName;
 		response.sendRedirect(path);
-	}
-
-	/**
-	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
-	 */
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
-		doGet(request, response);
 	}
 	public void destroy() {
 		try {

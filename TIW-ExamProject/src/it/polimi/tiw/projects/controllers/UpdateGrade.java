@@ -83,7 +83,7 @@ public class UpdateGrade extends HttpServlet {
 		
 		String ctxpath = getServletContext().getContextPath();
 		String path = ctxpath +
-				"/GoToRegisteredStudents?appelloDate=" + exam.getAppello().getDate() +
+				"/GoToRegisteredStudents?date=" + exam.getAppello().getDate() +
 				"&appelloId=" + exam.getAppello().getId() +
 				"&courseName=" + exam.getAppello().getCourse().getName();
 		response.sendRedirect(path);

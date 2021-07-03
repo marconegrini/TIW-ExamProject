@@ -5,6 +5,7 @@ import java.sql.Connection;
 import java.sql.Date;
 import java.sql.SQLException;
 
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -14,6 +15,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.thymeleaf.TemplateEngine;
+import org.thymeleaf.context.WebContext;
 import org.thymeleaf.templatemode.TemplateMode;
 import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
 
@@ -73,9 +75,10 @@ public class Rifiuta extends HttpServlet {
 		Integer courseId = null;
 		try {
 			examId = Integer.parseInt(request.getParameter("examId"));
-			appelloDate = Date.valueOf(request.getParameter("appelloDate"));
+			appelloDate = Date.valueOf(request.getParameter("date"));
 			courseId = Integer.parseInt(request.getParameter("courseId"));
 		} catch (IllegalArgumentException | NullPointerException e) {
+			e.printStackTrace();
 			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid parameter value");
 			return;
 		}
@@ -86,8 +89,11 @@ public class Rifiuta extends HttpServlet {
 			return;
 		}
 		
+		/*RequestDispatcher dispatcher = request.getRequestDispatcher("/GoToExamResult?course=" + courseId + "&appello=" + appelloDate);
+		dispatcher.forward(request, response);*/
+		
 		String ctxpath = getServletContext().getContextPath();
-		String path = ctxpath + "GoToExamResult?course=" + courseId + "&appello=" + appelloDate;
+		String path = ctxpath + "/GoToExamResult?course=" + courseId + "&appello=" + appelloDate;
 		response.sendRedirect(path);
 	}
 

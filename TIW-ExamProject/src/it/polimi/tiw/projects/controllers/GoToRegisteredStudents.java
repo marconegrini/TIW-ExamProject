@@ -38,7 +38,6 @@ public class GoToRegisteredStudents extends HttpServlet {
      */
     public GoToRegisteredStudents() {
         super();
-        // TODO Auto-generated constructor stub
     }
     
     public void init() throws ServletException{
@@ -57,9 +56,7 @@ public class GoToRegisteredStudents extends HttpServlet {
 	 */
     
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
-		
-		Professor professor = (Professor) request.getSession().getAttribute("professor");
+
 		Integer appelloId = null;
 		String appello = null;
 		Date appelloDate = null;
@@ -67,10 +64,10 @@ public class GoToRegisteredStudents extends HttpServlet {
 		String sortBy = null;
 		
 		try {
-			appello = request.getParameter("appelloDate");
+			appello = request.getParameter("date");
 			appelloDate = Date.valueOf(appello);
 		} catch (IllegalArgumentException | NullPointerException e) {
-			// only for debugging e.printStackTrace();
+			e.printStackTrace();
 			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Incorrect appello date value");
 			return;
 		}
@@ -78,7 +75,7 @@ public class GoToRegisteredStudents extends HttpServlet {
 		try {
 			appelloId = Integer.parseInt(request.getParameter("appelloId"));
 		} catch (IllegalArgumentException | NullPointerException e) {
-			// only for debugging e.printStackTrace();
+			e.printStackTrace();
 			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Incorrect appello date value");
 			return;
 		}
@@ -88,9 +85,9 @@ public class GoToRegisteredStudents extends HttpServlet {
 		try {
 			courseName = request.getParameter("courseName");
 		} catch (IllegalArgumentException | NullPointerException e) {
-			// only for debugging e.printStackTrace();
-				response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Incorrect course name value");
-				return;
+			e.printStackTrace();
+			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Incorrect course name value");
+			return;
 		}
 		
 		Order order = null;
@@ -114,7 +111,7 @@ public class GoToRegisteredStudents extends HttpServlet {
 		CourseDAO courseDao = new CourseDAO(connection);
 		List<Exam> registeredStudents = null;
 		try {
-			registeredStudents = courseDao.findRegisteredStudents(appelloId, sortBy, order.toString());	
+			registeredStudents = courseDao.findRegisteredStudents(appelloId, sortBy, order);	
 			if(registeredStudents == null) {
 				response.sendError(HttpServletResponse.SC_NOT_FOUND, "Resource not found");
 				return;
@@ -130,7 +127,7 @@ public class GoToRegisteredStudents extends HttpServlet {
 		final WebContext ctx = new WebContext(request, response, servletContext, request.getLocale());
 		ctx.clearVariables();
 		ctx.setVariable("registeredStudents", registeredStudents);
-		ctx.setVariable("appelloDate", appelloDate);
+		ctx.setVariable("date", appelloDate);
 		ctx.setVariable("courseName", courseName);
 		ctx.setVariable("appelloId", appelloId);
 		this.templateEngine.process(path, ctx, response.getWriter());

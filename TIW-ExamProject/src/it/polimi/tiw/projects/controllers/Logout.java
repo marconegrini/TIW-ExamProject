@@ -2,6 +2,7 @@ package it.polimi.tiw.projects.controllers;
 
 import java.io.IOException;
 
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -22,8 +23,12 @@ public class Logout extends HttpServlet {
 
 		HttpSession session = request.getSession(false);
 		if (session != null) {
+			session.removeAttribute("student");
+			session.removeAttribute("professor");
 			session.invalidate();
 		}
+		
+		// L'utente necessita di essere informato
 		String path = getServletContext().getContextPath() + "/index.html";
 		response.sendRedirect(path);
 	}
